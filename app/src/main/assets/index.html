@@ -2492,7 +2492,7 @@
 
     // --- INDEXEDDB LAYER ---
     const DB_NAME = 'DentalProDB';
-    const DB_VERSION = 1;
+    const DB_VERSION = 2; // Incremented to trigger upgrade for new tables like 'targets'
 
     class DentalDB {
       static open() {
@@ -3088,45 +3088,50 @@
       },
 
       async init() {
-        // Data do dia e mês inicial
-        const now = new Date();
-        const yyyy = now.getFullYear();
-        const mm = String(now.getMonth() + 1).padStart(2, '0');
-        this.state.currentMonth = `${yyyy}-${mm}`;
+        try {
+          // Data do dia e mês inicial
+          const now = new Date();
+          const yyyy = now.getFullYear();
+          const mm = String(now.getMonth() + 1).padStart(2, '0');
+          this.state.currentMonth = `${yyyy}-${mm}`;
 
-        // Preenche selects de quantidade (1..10) e tempo (1..90)
-        this.populateDropdowns();
-        this.buildOdontogramUI();
+          // Preenche selects de quantidade (1..10) e tempo (1..90)
+          this.populateDropdowns();
+          this.buildOdontogramUI();
 
-        // Carrega dados do IndexedDB
-        await this.loadDatabase();
+          // Carrega dados do IndexedDB
+          await this.loadDatabase();
 
-        // Se for primeira vez, inicializa procedimentos e configurações
-        if (this.state.procedures.length === 0) {
-          for (const p of INITIAL_PROCEDURES) {
-            await DentalDB.put('procedures', p);
+          // Se for primeira vez, inicializa procedimentos e configurações
+          if (this.state.procedures.length === 0) {
+            for (const p of INITIAL_PROCEDURES) {
+              await DentalDB.put('procedures', p);
+            }
+            this.state.procedures = await DentalDB.getAll('procedures');
           }
-          this.state.procedures = await DentalDB.getAll('procedures');
+
+          // Verifica senha do admin
+          const pwObj = await DentalDB.get('settings', 'adminPasswordHash');
+          if (pwObj) {
+            this.state.settings.adminPasswordHash = pwObj.value;
+          }
+
+          const clinicObj = await DentalDB.get('settings', 'clinicName');
+          if (clinicObj) this.state.settings.clinicName = clinicObj.value;
+
+          const profObj = await DentalDB.get('settings', 'professionalName');
+          if (profObj) this.state.settings.professionalName = profObj.value;
+
+          this.updateHeaderAndBranding();
+          this.updateProcedureSelects();
+          this.resetNewRecordForm();
+          this.refreshAllIndicators();
+
+          console.log('DentalPro inicializado com sucesso.');
+        } catch (err) {
+          console.error('Erro crítico na inicialização:', err);
+          this.toast('Erro ao iniciar o aplicativo: ' + err.message, 'error');
         }
-
-        // Verifica senha do admin
-        const pwObj = await DentalDB.get('settings', 'adminPasswordHash');
-        if (pwObj) {
-          this.state.settings.adminPasswordHash = pwObj.value;
-        }
-
-        const clinicObj = await DentalDB.get('settings', 'clinicName');
-        if (clinicObj) this.state.settings.clinicName = clinicObj.value;
-
-        const profObj = await DentalDB.get('settings', 'professionalName');
-        if (profObj) this.state.settings.professionalName = profObj.value;
-
-        this.updateHeaderAndBranding();
-        this.updateProcedureSelects();
-        this.resetNewRecordForm();
-        this.refreshAllIndicators();
-
-        console.log('DentalPro inicializado com sucesso.');
       },
 
       async loadDatabase() {
