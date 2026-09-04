@@ -1,0 +1,4449 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#A61C41" />
+  <title>DentalPro — Dr. Jovane Dantas</title>
+  
+  <!-- PDF Generation Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <style>
+    :root {
+      --primary: #A61C41;
+      --primary-dark: #78112C;
+      --secondary: #D9305D;
+      --support: #D9738E;
+      --support-light: #F9E8EC;
+      --bg: #F5F7FA;
+      --glass-bg: rgba(255, 255, 255, 0.75);
+      --glass-border: rgba(255, 255, 255, 0.5);
+      --glass-blur: blur(16px);
+      --card-bg: var(--glass-bg);
+      --text-main: #2D3748;
+      --text-muted: #718096;
+      --border-color: rgba(255, 255, 255, 0.3);
+      --radius-sm: 10px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --shadow: 0 8px 32px rgba(31, 38, 135, 0.07);
+      --shadow-lg: 0 12px 40px rgba(166, 28, 65, 0.12);
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    body {
+      background: var(--bg);
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(166, 28, 65, 0.08) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(217, 48, 93, 0.08) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(46, 125, 50, 0.05) 0px, transparent 50%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding-bottom: 84px;
+    }
+    header.app-header {
+      background: rgba(166, 28, 65, 0.85);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      color: #FFF;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-branding {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header-logo {
+      width: 38px;
+      height: 38px;
+      background: #FFF;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    .header-logo svg {
+      width: 24px;
+      height: 24px;
+      fill: var(--primary);
+    }
+    .header-titles h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .header-titles p {
+      font-size: 0.72rem;
+      opacity: 0.9;
+      font-weight: 400;
+    }
+    .header-month-badge {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    main.app-container {
+      flex: 1;
+      padding: 16px;
+      max-width: 600px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    .view-section {
+      display: none;
+      animation: fadeIn 0.2s ease-in-out;
+    }
+    .view-section.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+    }
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    /* --- ESTILOS DO DASHBOARD EXECUTIVO --- */
+    .dash-hero-card {
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-left: 5px solid var(--primary);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow);
+    }
+    .dash-hero-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .dash-hero-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(166, 28, 65, 0.1);
+      border: 1.5px solid rgba(166, 28, 65, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      flex-shrink: 0;
+    }
+    .dash-hero-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .dash-hero-greeting {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .dash-hero-name {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin: 1px 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .dash-hero-clinic {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .dash-hero-month-pill {
+      background: #FFF;
+      border: 1.5px solid rgba(166, 28, 65, 0.25);
+      border-radius: 20px;
+      padding: 6px 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--primary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+      flex-shrink: 0;
+    }
+    .dash-hero-chips {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px dashed rgba(166, 28, 65, 0.15);
+      flex-wrap: wrap;
+    }
+    .dash-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.4);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 4px 10px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .dash-chip.active {
+      border-color: rgba(46, 125, 50, 0.4);
+      background: rgba(241, 248, 241, 0.6);
+      color: #2E7D32;
+    }
+    .dash-chip-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #2E7D32;
+      box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.2);
+    }
+
+    /* VIP REVENUE CARD */
+    .dash-vip-card {
+      background: linear-gradient(135deg, rgba(120, 17, 44, 0.85) 0%, rgba(166, 28, 65, 0.85) 100%);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      color: #FFF;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      overflow: hidden;
+    }
+    .dash-vip-card::after {
+      content: '';
+      position: absolute;
+      right: -20px;
+      bottom: -20px;
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.07);
+      pointer-events: none;
+    }
+    .dash-vip-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .dash-vip-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      color: rgba(255, 255, 255, 0.85);
+    }
+    .dash-vip-title svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+    .dash-vip-badge {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(4px);
+      padding: 3px 9px;
+      border-radius: 12px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #FFF;
+    }
+    .dash-vip-value {
+      font-size: 1.85rem;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      margin-bottom: 14px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    }
+    .dash-vip-footer {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.15);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+    }
+    .dash-vip-subitem {
+      text-align: center;
+    }
+    .dash-vip-sublabel {
+      display: block;
+      font-size: 0.65rem;
+      color: rgba(255, 255, 255, 0.75);
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .dash-vip-subval {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: #FFF;
+      white-space: nowrap;
+    }
+    .dash-vip-subval.highlight {
+      color: #FFE082;
+    }
+    .dash-vip-divider {
+      width: 1px;
+      height: 24px;
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* KPI GRID */
+    .dash-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .dash-kpi-card {
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+    .dash-kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
+      pointer-events: none;
+    }
+    .dash-kpi-card:active, .dash-kpi-card:hover {
+      transform: scale(0.97) translateY(-2px);
+      border-color: rgba(166, 28, 65, 0.3);
+      background: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 12px 24px rgba(31, 38, 135, 0.1);
+    }
+    .dash-kpi-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .dash-kpi-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      background: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .dash-kpi-tag {
+      font-size: 0.68rem;
+      font-weight: 800;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(4px);
+      color: var(--text-main);
+      padding: 2px 7px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+    .dash-kpi-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      position: relative;
+    }
+    .dash-kpi-val {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 4px;
+      letter-spacing: -0.2px;
+      position: relative;
+    }
+    .dash-kpi-status {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: auto;
+      position: relative;
+    }
+
+    /* TERMÔMETRO DA META */
+    .dash-thermo-card {
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow);
+    }
+    .dash-thermo-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .dash-thermo-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 12px;
+      background: #FFF3E0;
+      color: #E65100;
+    }
+    .dash-thermo-badge.achieved {
+      background: #E8F5E9;
+      color: #2E7D32;
+    }
+    .dash-thermo-progress-wrap {
+      margin: 10px 0;
+    }
+    .dash-thermo-track {
+      background: #EAEAEA;
+      height: 18px;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+    }
+    .dash-thermo-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #D9305D 0%, #A61C41 70%, #2E7D32 100%);
+      border-radius: 12px;
+      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      width: 0%;
+    }
+    .dash-thermo-milestones {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+      font-weight: 700;
+      padding: 0 2px;
+    }
+    .dash-thermo-summary-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      background: rgba(255, 255, 255, 0.4);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+      padding: 10px;
+      margin-top: 10px;
+    }
+    .dash-thermo-sublabel {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .dash-thermo-subval {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+    .dash-thermo-subval.highlight {
+      color: var(--primary);
+    }
+    .dash-thermo-insight {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      margin-top: 10px;
+      padding: 8px 10px;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: var(--radius-sm);
+      border-left: 3px solid var(--primary);
+      line-height: 1.35;
+      backdrop-filter: blur(4px);
+    }
+
+    /* AÇÕES RÁPIDAS (QUICK ACTIONS) */
+    .dash-actions-title {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--text-main);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+      margin-top: 20px;
+    }
+    .dash-quick-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .dash-quick-btn {
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: 12px 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-main);
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      transition: all 0.2s ease;
+      text-align: left;
+    }
+    .dash-quick-btn:active, .dash-quick-btn:hover {
+      transform: scale(0.97) translateY(-2px);
+      background: rgba(255, 255, 255, 0.8);
+      border-color: rgba(166, 28, 65, 0.3);
+      box-shadow: 0 8px 24px rgba(31, 38, 135, 0.08);
+    }
+    .dash-quick-btn.highlight {
+      background: linear-gradient(135deg, rgba(166, 28, 65, 0.85) 0%, rgba(217, 48, 93, 0.85) 100%);
+      color: #FFF;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      grid-column: span 2;
+      padding: 14px 16px;
+      box-shadow: var(--shadow-lg);
+    }
+    .dash-quick-btn.highlight .dash-quick-icon-wrap {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(4px);
+      color: #FFF;
+    }
+    .dash-quick-icon-wrap {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--primary);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .dash-quick-icon-wrap.icon-blue { color: #1976D2; background: rgba(25, 118, 210, 0.1); }
+    .dash-quick-icon-wrap.icon-purple { color: #7B1FA2; background: rgba(123, 31, 162, 0.1); }
+    .dash-quick-icon-wrap.icon-green { color: #2E7D32; background: rgba(46, 125, 50, 0.1); }
+    .dash-quick-icon-wrap svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    /* MINI FEED ÚLTIMOS ATENDIMENTOS */
+    .dash-recent-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.8rem;
+    }
+    .dash-recent-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    .dash-recent-left {
+      flex: 1;
+      min-width: 0;
+      padding-right: 8px;
+    }
+    .dash-recent-proc {
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .dash-recent-meta {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .dash-recent-right {
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .dash-recent-val {
+      font-weight: 800;
+      color: var(--primary);
+      font-size: 0.88rem;
+    }
+    .dash-recent-rent {
+      font-size: 0.68rem;
+      color: #2E7D32;
+      font-weight: 700;
+    }
+    .form-group {
+      margin-bottom: 14px;
+    }
+    .form-label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+    .form-label span.req {
+      color: var(--primary);
+    }
+    .form-control, .form-select {
+      width: 100%;
+      height: 48px;
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+      padding: 0 12px;
+      font-size: 0.95rem;
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(4px);
+      outline: none;
+      transition: all 0.2s ease;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: var(--primary);
+      background: #FFF;
+      box-shadow: 0 0 0 3px rgba(166, 28, 65, 0.15);
+    }
+    textarea.form-control {
+      height: auto;
+      padding: 10px 12px;
+      resize: vertical;
+    }
+    .calculated-badge-card {
+      background: rgba(249, 232, 236, 0.7);
+      backdrop-filter: blur(8px);
+      border: 1.5px dashed rgba(166, 28, 65, 0.5);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin: 16px 0;
+    }
+    .calc-item {
+      text-align: center;
+    }
+    .calc-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+    }
+    .calc-val {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+    }
+    .odontogram-container {
+      background: rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .odonto-row {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+    .odonto-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: 4px;
+    }
+    .tooth-btn {
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid var(--glass-border);
+      border-radius: 6px;
+      height: 38px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+    .tooth-btn:hover {
+      background: #FFF;
+      border-color: rgba(166, 28, 65, 0.3);
+    }
+    .tooth-btn.selected {
+      background: linear-gradient(135deg, rgba(166, 28, 65, 0.9) 0%, rgba(217, 48, 93, 0.9) 100%);
+      color: #FFF;
+      border-color: transparent;
+      box-shadow: 0 4px 10px rgba(166, 28, 65, 0.25);
+    }
+    .tooth-selection-preview {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+    .tooth-selection-preview strong {
+      color: var(--primary);
+    }
+    .btn {
+      width: 100%;
+      height: 48px;
+      border-radius: var(--radius-sm);
+      border: none;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      backdrop-filter: blur(4px);
+    }
+    .btn:active {
+      transform: scale(0.98);
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, rgba(166, 28, 65, 0.9) 0%, rgba(217, 48, 93, 0.9) 100%);
+      color: #FFF;
+      box-shadow: 0 4px 12px rgba(166, 28, 65, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.5);
+      color: var(--text-main);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .btn-danger {
+      background: rgba(201, 42, 42, 0.9);
+      color: #FFF;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .btn-sm {
+      height: 36px;
+      font-size: 0.8rem;
+      padding: 0 12px;
+      width: auto;
+    }
+    .records-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .record-card {
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .record-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .record-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .record-date-badge {
+      font-size: 0.72rem;
+      background: rgba(255, 255, 255, 0.6);
+      border: 1px solid rgba(0,0,0,0.05);
+      padding: 3px 8px;
+      border-radius: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .record-details {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+      font-size: 0.8rem;
+      background: rgba(255, 255, 255, 0.4);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+    }
+    .record-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .ranking-card {
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: var(--shadow);
+    }
+    .ranking-pos {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #FFF;
+      font-weight: 800;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .ranking-pos.pos-2 {
+      background: var(--secondary);
+    }
+    .ranking-pos.pos-3 {
+      background: var(--support);
+    }
+    .ranking-info {
+      flex: 1;
+    }
+    .ranking-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .ranking-stats {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 3px;
+    }
+    .ranking-rentability {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+      text-align: right;
+    }
+    .ranking-rentability small {
+      display: block;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .chart-container {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      padding: 14px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+    }
+    .chart-header {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+    nav.bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 68px;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border-top: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+      z-index: 100;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      flex: 1;
+      height: 100%;
+    }
+    .nav-item.active {
+      color: var(--primary);
+      text-shadow: 0 0 8px rgba(166, 28, 65, 0.2);
+    }
+    .nav-item svg {
+      width: 22px;
+      height: 22px;
+      fill: currentColor;
+    }
+    .nav-item.nav-fab {
+      margin-top: -24px;
+    }
+    .nav-item.nav-fab .fab-circle {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(166, 28, 65, 0.9) 0%, rgba(217, 48, 93, 0.9) 100%);
+      color: #FFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-lg);
+      border: 3px solid rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(4px);
+    }
+    .nav-item.nav-fab .fab-circle svg {
+      width: 26px;
+      height: 26px;
+      fill: #FFF;
+    }
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      animation: fadeIn 0.2s ease;
+      box-sizing: border-box;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+    .modal-backdrop.show {
+      display: flex !important;
+    }
+    .modal-box {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 440px;
+      max-height: 88vh;
+      overflow-y: auto;
+      padding: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+      position: relative;
+      margin: auto;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+    }
+    .modal-header {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+    }
+    .modal-close-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: #F2F2F2;
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      transition: all 0.15s;
+    }
+    .modal-close-btn:active {
+      background: #E5E5E5;
+      color: var(--primary);
+    }
+    .menu-action-tile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      background: #FAFAFA;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s ease;
+      margin-bottom: 8px;
+      width: 100%;
+    }
+    .menu-action-tile:active {
+      background: var(--support-light);
+      border-color: var(--primary);
+      transform: scale(0.98);
+    }
+    .menu-tile-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: #FFF;
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    }
+    .menu-tile-content {
+      flex: 1;
+    }
+    .menu-tile-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 2px;
+    }
+    .menu-tile-desc {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      line-height: 1.2;
+    }
+    .menu-tile-arrow {
+      color: var(--text-muted);
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+    .extract-scope-card {
+      background: #FAFAFA;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .extract-scope-card.selected {
+      background: var(--support-light);
+      border-color: var(--primary);
+      box-shadow: 0 2px 8px rgba(166, 28, 65, 0.12);
+    }
+    .extract-radio-circle {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background: #FFF;
+    }
+    .extract-scope-card.selected .extract-radio-circle {
+      border-color: var(--primary);
+    }
+    .extract-scope-card.selected .extract-radio-circle::after {
+      content: '';
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--primary);
+    }
+    .extract-preview-box {
+      background: #FDF2F4;
+      border: 1px solid var(--support);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      margin: 12px 0 16px;
+      font-size: 0.8rem;
+      display: flex;
+      justify-content: space-around;
+      text-align: center;
+    }
+    .toast-msg {
+      position: fixed;
+      top: 76px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2B2B2B;
+      color: #FFF;
+      padding: 10px 18px;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      z-index: 300;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      box-shadow: var(--shadow);
+      max-width: 90%;
+      text-align: center;
+    }
+    .toast-msg.show {
+      opacity: 1;
+    }
+    .toast-msg.success {
+      background: var(--primary);
+    }
+    @media print {
+      body {
+        background: #FFF !important;
+        padding-bottom: 0 !important;
+      }
+      header.app-header, nav.bottom-nav, .no-print {
+        display: none !important;
+      }
+      .print-only {
+        display: block !important;
+      }
+      .card {
+        box-shadow: none !important;
+        border: 1px solid #CCC !important;
+        page-break-inside: avoid;
+      }
+    }
+    .print-only {
+      display: none;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 36px 16px;
+      color: var(--text-muted);
+    }
+    .empty-state svg {
+      width: 48px;
+      height: 48px;
+      fill: var(--support);
+      margin-bottom: 12px;
+    }
+    .empty-state h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+    .empty-state p {
+      font-size: 0.8rem;
+      margin-bottom: 16px;
+    }
+
+    /* CUSTOM BRAZILIAN DATE & MONTH PICKER STYLES */
+    .custom-date-picker-input {
+      width: 100%;
+      height: 48px;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 0 12px;
+      font-size: 0.95rem;
+      color: var(--text-main);
+      background: #FFF;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .custom-date-picker-input:active, .custom-date-picker-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(166, 28, 65, 0.15);
+    }
+    .custom-date-picker-input.compact {
+      height: 38px;
+      font-size: 0.82rem;
+      padding: 0 8px;
+    }
+    .custom-date-picker-input svg {
+      width: 20px;
+      height: 20px;
+      fill: var(--primary);
+      flex-shrink: 0;
+    }
+    .custom-date-picker-input.compact svg {
+      width: 16px;
+      height: 16px;
+    }
+    .cal-modal-box {
+      background: #FFF;
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 360px;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      padding: 0;
+    }
+    .cal-header-bar {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: #FFF;
+      padding: 16px 20px;
+    }
+    .cal-header-subtitle {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.9;
+      font-weight: 700;
+    }
+    .cal-header-selected-date {
+      font-size: 1.2rem;
+      font-weight: 800;
+      margin-top: 4px;
+      line-height: 1.25;
+    }
+    .cal-nav-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px 6px;
+    }
+    .cal-nav-btn {
+      background: #F2F2F2;
+      border: 1px solid var(--border-color);
+      border-radius: 50%;
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-main);
+      font-weight: bold;
+    }
+    .cal-nav-btn:active {
+      background: #E0E0E0;
+      transform: scale(0.95);
+    }
+    .cal-nav-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+      cursor: pointer;
+    }
+    .cal-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--text-muted);
+      padding: 8px 14px;
+      border-bottom: 1px solid #F0F0F0;
+    }
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      padding: 10px 14px 14px;
+    }
+    .cal-day-cell {
+      aspect-ratio: 1 / 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-main);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.12s ease;
+    }
+    .cal-day-cell:active {
+      transform: scale(0.92);
+    }
+    .cal-day-cell.other-month {
+      color: #CCC;
+      font-weight: 400;
+    }
+    .cal-day-cell.today {
+      border: 1.5px solid var(--primary);
+      color: var(--primary);
+    }
+    .cal-day-cell.selected {
+      background: var(--primary) !important;
+      color: #FFF !important;
+      font-weight: 800;
+      box-shadow: 0 2px 8px rgba(166, 28, 65, 0.4);
+    }
+    .cal-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px 16px;
+      border-top: 1px solid #F0F0F0;
+      gap: 8px;
+    }
+    .cal-action-btn {
+      background: transparent;
+      border: none;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--primary);
+      cursor: pointer;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+    }
+    .cal-action-btn.primary {
+      background: var(--primary);
+      color: #FFF;
+    }
+    .cal-action-btn:active {
+      opacity: 0.8;
+    }
+
+    /* MONTH PICKER MODAL STYLES */
+    .month-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 16px;
+    }
+    .month-cell {
+      background: #F8F8F8;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 14px 8px;
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+    .month-cell:active {
+      transform: scale(0.96);
+    }
+    .month-cell.selected {
+      background: var(--primary);
+      color: #FFF;
+      border-color: var(--primary-dark);
+      box-shadow: 0 2px 6px rgba(166, 28, 65, 0.35);
+    }
+    .month-year-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px 0;
+    }
+
+    /* CUSTOM BRAZILIAN 24H TIME PICKER STYLES */
+    .time-picker-header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: #FFF;
+      padding: 16px 20px;
+      text-align: center;
+    }
+    .time-picker-title {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.9;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .time-picker-display {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 2.2rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .time-digit-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1.5px solid transparent;
+      border-radius: var(--radius-sm);
+      color: #FFF;
+      padding: 6px 14px;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+      font-size: 2.1rem;
+      font-weight: 800;
+    }
+    .time-digit-btn.active {
+      background: #FFF;
+      color: var(--primary);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    }
+    .time-preset-bar {
+      display: flex;
+      gap: 6px;
+      padding: 10px 14px;
+      background: #FAFAFA;
+      border-bottom: 1px solid #EEE;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .time-preset-chip {
+      background: #FFF;
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+    .time-preset-chip:active {
+      background: var(--primary);
+      color: #FFF;
+    }
+    .time-tabs-bar {
+      display: flex;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .time-tab-btn {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+    }
+    .time-tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+    .time-grid-24h {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+      padding: 14px;
+      max-height: 210px;
+      overflow-y: auto;
+    }
+    .time-cell {
+      aspect-ratio: 1 / 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-main);
+      background: #F8F8F8;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.1s ease;
+    }
+    .time-cell:active {
+      transform: scale(0.94);
+    }
+    .time-cell.selected {
+      background: var(--primary) !important;
+      color: #FFF !important;
+      border-color: var(--primary-dark) !important;
+      box-shadow: 0 2px 6px rgba(166, 28, 65, 0.35);
+    }
+    .time-minutes-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      padding: 14px;
+    }
+    .time-minute-cell {
+      background: #F8F8F8;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 12px 6px;
+      text-align: center;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.1s ease;
+    }
+    .time-minute-cell:active {
+      transform: scale(0.94);
+    }
+    .time-minute-cell.selected {
+      background: var(--primary) !important;
+      color: #FFF !important;
+      border-color: var(--primary-dark) !important;
+      box-shadow: 0 2px 6px rgba(166, 28, 65, 0.35);
+    }
+    .time-stepper-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 0 14px 12px;
+    }
+    .time-step-btn {
+      background: #FFF;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 6px 14px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--primary);
+      cursor: pointer;
+    }
+    .time-step-btn:active {
+      background: rgba(166, 28, 65, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <div id="toast" class="toast-msg"></div>
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="header-branding">
+      <div class="header-logo">
+        <svg viewBox="0 0 24 24"><path d="M12 2C8.69 2 6 4.69 6 8c0 2.21 1.2 4.15 3 5.19V19c0 1.1.9 2 2 2h2c1.1 0 2-.9 2-2v-5.81c1.8-.94 3-2.98 3-5.19 0-3.31-2.69-6-6-6zm0 14c-.55 0-1-.45-1-1v-2h2v2c0 .55-.45 1-1 1zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"/></svg>
+      </div>
+      <div class="header-titles">
+        <h1 id="app-title-display">DentalPro</h1>
+        <p id="clinic-name-display">Dental Clínica Dr. Jovane Dantas</p>
+      </div>
+    </div>
+    <div class="header-month-badge" id="current-month-badge" onclick="DentalMonthPicker.openForHeader()">
+      Agosto / 2026 ▾
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="app-container">
+
+    <!-- VIEW 1: PAINEL / DASHBOARD EXECUTIVO -->
+    <section id="view-dashboard" class="view-section active">
+      
+      <!-- HERO STATUS CARD -->
+      <div class="dash-hero-card">
+        <div class="dash-hero-top">
+          <div class="dash-hero-avatar">
+            <span>🦷</span>
+          </div>
+          <div class="dash-hero-info">
+            <div class="dash-hero-greeting" id="dash-greeting-text">Painel Clínico</div>
+            <h2 class="dash-hero-name" id="dash-prof-name">Dr. Jovane Dantas</h2>
+            <div class="dash-hero-clinic" id="dash-clinic-sub">Dental Clínica Dr. Jovane Dantas</div>
+          </div>
+          <div class="dash-hero-month-pill" onclick="DentalMonthPicker.openForHeader()" title="Trocar Mês de Trabalho">
+            <span id="dash-active-month-text">Agosto / 2026</span> ▾
+          </div>
+        </div>
+        <div class="dash-hero-chips">
+          <div class="dash-chip active">
+            <span class="dash-chip-dot"></span>
+            <span id="dash-status-badge">Sistema Operacional</span>
+          </div>
+          <div class="dash-chip">
+            <span>🗓️ <span id="dash-prod-days">0 dias produzidos</span></span>
+          </div>
+          <div class="dash-chip" onclick="App.openExtractModal()" style="cursor: pointer; background: #FFF; border-color: rgba(166, 28, 65, 0.3); color: var(--primary);">
+            <span>📄 <strong>Extrato / PDF</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- FATURAMENTO VIP HIGHLIGHT CARD -->
+      <div class="dash-vip-card" onclick="App.navigate('production')" style="cursor: pointer;" title="Ver detalhes da produção">
+        <div class="dash-vip-header">
+          <div class="dash-vip-title">
+            <svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+            <span>FATURAMENTO DO MÊS</span>
+          </div>
+          <span class="dash-vip-badge" id="dash-today-revenue">Hoje: R$ 0,00</span>
+        </div>
+        <div class="dash-vip-value" id="dash-month-revenue">R$ 0,00</div>
+        <div class="dash-vip-footer">
+          <div class="dash-vip-subitem">
+            <span class="dash-vip-sublabel">Média Diária</span>
+            <span class="dash-vip-subval" id="dash-daily-avg">R$ 0,00/dia</span>
+          </div>
+          <div class="dash-vip-divider"></div>
+          <div class="dash-vip-subitem">
+            <span class="dash-vip-sublabel">Projeção Mês</span>
+            <span class="dash-vip-subval highlight" id="dash-projection">R$ 0,00</span>
+          </div>
+          <div class="dash-vip-divider"></div>
+          <div class="dash-vip-subitem">
+            <span class="dash-vip-sublabel">Total Base</span>
+            <span class="dash-vip-subval" id="dash-alltime-revenue">R$ 0,00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI GRID -->
+      <div class="dash-kpi-grid">
+        <!-- KPI 1: META MENSAL -->
+        <div class="dash-kpi-card" onclick="App.navigate('target')">
+          <div class="dash-kpi-top">
+            <div class="dash-kpi-icon" style="color: #D9305D; background: rgba(217, 48, 93, 0.1);">🎯</div>
+            <span class="dash-kpi-tag" id="dash-target-percent">0%</span>
+          </div>
+          <div class="dash-kpi-label">Meta Mensal</div>
+          <div class="dash-kpi-val" id="dash-month-target">R$ 0,00</div>
+          <div class="dash-kpi-status" id="dash-target-status">Defina sua meta</div>
+        </div>
+
+        <!-- KPI 2: RENTABILIDADE MÉDIA -->
+        <div class="dash-kpi-card" onclick="App.navigate('rentability')">
+          <div class="dash-kpi-top">
+            <div class="dash-kpi-icon" style="color: #2E7D32; background: rgba(46, 125, 50, 0.1);">⚡</div>
+            <span class="dash-kpi-tag" id="dash-rent-hours-tag">0 min</span>
+          </div>
+          <div class="dash-kpi-label">Rentabilidade</div>
+          <div class="dash-kpi-val" id="dash-avg-rent-min" style="color: #2E7D32;">R$ 0,00/min</div>
+          <div class="dash-kpi-status" id="dash-rent-sub">Tempo total clínico</div>
+        </div>
+
+        <!-- KPI 3: PROCEDIMENTOS -->
+        <div class="dash-kpi-card" onclick="App.navigate('production')">
+          <div class="dash-kpi-top">
+            <div class="dash-kpi-icon" style="color: #1976D2; background: rgba(25, 118, 210, 0.1);">🦷</div>
+            <span class="dash-kpi-tag" id="dash-proc-count-tag">0 un</span>
+          </div>
+          <div class="dash-kpi-label">Procedimentos</div>
+          <div class="dash-kpi-val" id="dash-proc-count">0</div>
+          <div class="dash-kpi-status" id="dash-avg-ticket">Ticket Médio: R$ 0,00</div>
+        </div>
+
+        <!-- KPI 4: SALDO / FALTA -->
+        <div class="dash-kpi-card" onclick="App.navigate('target')">
+          <div class="dash-kpi-top">
+            <div class="dash-kpi-icon" style="color: #F57C00; background: rgba(245, 124, 0, 0.1);">📊</div>
+            <span class="dash-kpi-tag" id="dash-target-remaining-tag">Saldo</span>
+          </div>
+          <div class="dash-kpi-label">Falta p/ Meta</div>
+          <div class="dash-kpi-val" id="dash-target-remaining" style="color: #F57C00;">R$ 0,00</div>
+          <div class="dash-kpi-status" id="dash-target-daily-pace">Em acompanhamento</div>
+        </div>
+      </div>
+
+      <!-- TERMÔMETRO DA META MENSAL -->
+      <div class="dash-thermo-card" onclick="App.navigate('target')" style="cursor: pointer;" title="Configurar Meta Mensal">
+        <div class="dash-thermo-header">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 1.15rem;">🎯</span>
+            <span style="font-weight: 800; font-size: 0.92rem; color: var(--primary);">Progresso da Meta</span>
+          </div>
+          <span class="dash-thermo-badge" id="dash-thermo-badge">Em andamento</span>
+        </div>
+        
+        <div class="dash-thermo-progress-wrap">
+          <div class="dash-thermo-track">
+            <div id="dash-thermo-fill" class="dash-thermo-fill"></div>
+          </div>
+          <div class="dash-thermo-milestones">
+            <span>0%</span>
+            <span>25%</span>
+            <span>50%</span>
+            <span>75%</span>
+            <span>100%</span>
+          </div>
+        </div>
+
+        <div class="dash-thermo-summary-row">
+          <div>
+            <div class="dash-thermo-sublabel">Realizado</div>
+            <div class="dash-thermo-subval" id="dash-thermo-realized">R$ 0,00</div>
+          </div>
+          <div style="text-align: center;">
+            <div class="dash-thermo-sublabel">Atingido</div>
+            <div class="dash-thermo-subval highlight" id="dash-thermo-pct">0%</div>
+          </div>
+          <div style="text-align: right;">
+            <div class="dash-thermo-sublabel">Meta Fixada</div>
+            <div class="dash-thermo-subval" id="dash-thermo-goal">R$ 0,00</div>
+          </div>
+        </div>
+
+        <div class="dash-thermo-insight" id="dash-thermo-insight-box">
+          💡 Defina uma meta para acompanhar seu ritmo de faturamento em tempo real.
+        </div>
+      </div>
+
+      <!-- AÇÕES RÁPIDAS -->
+      <div class="dash-actions-title">Ações Rápidas</div>
+      <div class="dash-quick-grid">
+        <button type="button" class="dash-quick-btn highlight" onclick="App.navigate('new')">
+          <div class="dash-quick-icon-wrap">
+            <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+          </div>
+          <div>
+            <div style="font-weight: 800; font-size: 0.88rem;">Novo Atendimento</div>
+            <div style="font-size: 0.7rem; opacity: 0.9;">Registrar procedimento clínico</div>
+          </div>
+        </button>
+        <button type="button" class="dash-quick-btn" onclick="App.navigate('production')">
+          <div class="dash-quick-icon-wrap icon-blue">
+            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+          </div>
+          <div>
+            <div style="font-weight: 700; font-size: 0.82rem;">Minha Produção</div>
+            <div style="font-size: 0.68rem; color: var(--text-muted);">Banco de dados</div>
+          </div>
+        </button>
+        <button type="button" class="dash-quick-btn" onclick="App.openExtractModal()">
+          <div class="dash-quick-icon-wrap icon-purple">
+            <svg viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+          </div>
+          <div>
+            <div style="font-weight: 700; font-size: 0.82rem;">Extrato / PDF</div>
+            <div style="font-size: 0.68rem; color: var(--text-muted);">Imprimir relatório</div>
+          </div>
+        </button>
+        <button type="button" class="dash-quick-btn" onclick="App.navigate('rentability')">
+          <div class="dash-quick-icon-wrap icon-green">
+            <svg viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
+          </div>
+          <div>
+            <div style="font-weight: 700; font-size: 0.82rem;">Top Rentabilidade</div>
+            <div style="font-size: 0.68rem; color: var(--text-muted);">R$/minuto</div>
+          </div>
+        </button>
+      </div>
+
+      <!-- ÚLTIMOS ATENDIMENTOS (FEED DINÂMICO) -->
+      <div class="card" style="padding: 16px; margin-bottom: 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <div class="card-title" style="margin-bottom: 0; font-size: 0.9rem;">
+            <svg style="width: 18px; height: 18px; fill: currentColor;" viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+            Últimos Atendimentos
+          </div>
+          <button type="button" class="btn btn-sm btn-secondary" onclick="App.navigate('production')">Ver Todos ›</button>
+        </div>
+        <div id="dash-recent-records-container">
+          <!-- Renderizado dinamicamente via JS -->
+        </div>
+      </div>
+
+      <!-- GRÁFICO DINÂMICO -->
+      <div class="chart-container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <div class="chart-header" style="margin-bottom: 0;">Evolução Diária do Faturamento (R$)</div>
+          <span style="font-size: 0.72rem; color: var(--text-muted);" id="dash-chart-month-label">No Mês</span>
+        </div>
+        <div id="svg-chart-revenue" style="width: 100%; height: 140px;"></div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: NOVO REGISTRO / EDIÇÃO -->
+    <section id="view-new" class="view-section">
+      <div class="card">
+        <div class="card-title" id="form-record-title">
+          <svg style="width: 20px; height: 20px; fill: currentColor;" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+          Novo Registro de Atendimento
+        </div>
+        <form id="form-record" onsubmit="App.saveRecord(event)">
+          <input type="hidden" id="rec-id" value="" />
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div class="form-group">
+              <label class="form-label">Data <span class="req">*</span></label>
+              <div class="custom-date-picker-input" onclick="DentalDatePicker.open('rec-date')">
+                <span id="rec-date-display">17/08/2026</span>
+                <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+              </div>
+              <input type="hidden" id="rec-date" value="" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Hora (24h) <span class="req">*</span></label>
+              <div class="custom-date-picker-input" onclick="DentalTimePicker.open('rec-time')">
+                <span id="rec-time-display">11:23</span>
+                <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+              </div>
+              <input type="hidden" id="rec-time" value="11:23" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Procedimento <span class="req">*</span></label>
+            <select id="rec-proc-id" class="form-select" onchange="App.onProcedureChange()" required>
+              <option value="">Selecione um procedimento...</option>
+            </select>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div class="form-group">
+              <label class="form-label">Quantidade <span class="req">*</span></label>
+              <select id="rec-qty" class="form-select" onchange="App.recalcFormPreview()" required>
+                <!-- 1 a 10 -->
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tempo (Minutos) <span class="req">*</span></label>
+              <select id="rec-duration" class="form-select" onchange="App.recalcFormPreview()" required>
+                <!-- 1 a 90 -->
+              </select>
+            </div>
+          </div>
+
+          <!-- ODONTOGRAMA INTERATIVO FDI -->
+          <div class="form-group" id="rec-teeth-section">
+            <label class="form-label">Dentes (Numeração FDI Permanente)</label>
+            <div class="odontogram-container">
+              <div class="odonto-title">Arcada Superior (Quadrantes 1 e 2)</div>
+              <div class="odonto-row" id="odonto-row-upper">
+                <!-- 18..11 e 21..28 -->
+              </div>
+              <div class="odonto-title">Arcada Inferior (Quadrantes 4 e 3)</div>
+              <div class="odonto-row" id="odonto-row-lower">
+                <!-- 48..41 e 31..38 -->
+              </div>
+              <div class="tooth-selection-preview">
+                Dentes selecionados: <strong id="rec-teeth-display">Nenhum</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- VALOR TOTAL E RENTABILIDADE CALCULADOS -->
+          <div class="calculated-badge-card">
+            <div class="calc-item">
+              <div class="calc-title">Valor Unitário</div>
+              <div class="calc-val" id="preview-unit-price">R$ 0,00</div>
+            </div>
+            <div class="calc-item">
+              <div class="calc-title">Faturamento Total</div>
+              <div class="calc-val" id="preview-total-revenue">R$ 0,00</div>
+            </div>
+            <div class="calc-item">
+              <div class="calc-title">Rentabilidade</div>
+              <div class="calc-val" id="preview-rentability">R$ 0,00/min</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Observações (Opcional)</label>
+            <textarea id="rec-notes" class="form-control" rows="2" placeholder="Informações clínicas complementares..."></textarea>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <button type="button" class="btn btn-secondary" onclick="App.cancelEditRecord()">Cancelar</button>
+            <button type="submit" class="btn btn-primary" id="btn-save-record">Salvar Registro</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- VIEW 3: BANCO DE PRODUÇÃO & FILTROS -->
+    <section id="view-production" class="view-section">
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <div class="card-title" style="margin-bottom: 0;">Banco de Produção</div>
+          <button class="btn btn-sm btn-primary" onclick="App.openExtractModal()">
+            <svg style="width: 16px; height: 16px; fill: currentColor;" viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+            Gerar Extrato / PDF
+          </button>
+        </div>
+
+        <!-- FILTROS EXPANSÍVEIS -->
+        <details id="filters-accordion" style="background: #F9F9F9; padding: 10px; border-radius: var(--radius-sm); margin-bottom: 12px; border: 1px solid var(--border-color);">
+          <summary style="font-weight: 700; font-size: 0.85rem; color: var(--primary); cursor: pointer;">
+            🔍 Filtros de Busca Avançados
+          </summary>
+          <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <div>
+                <label class="form-label" style="font-size: 0.72rem;">Período De</label>
+                <div class="custom-date-picker-input compact" onclick="DentalDatePicker.open('filter-date-start', { allowClear: true })">
+                  <span id="filter-date-start-display">DD/MM/AAAA</span>
+                  <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+                </div>
+                <input type="hidden" id="filter-date-start" value="" />
+              </div>
+              <div>
+                <label class="form-label" style="font-size: 0.72rem;">Período Até</label>
+                <div class="custom-date-picker-input compact" onclick="DentalDatePicker.open('filter-date-end', { allowClear: true })">
+                  <span id="filter-date-end-display">DD/MM/AAAA</span>
+                  <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+                </div>
+                <input type="hidden" id="filter-date-end" value="" />
+              </div>
+            </div>
+            <div>
+              <label class="form-label" style="font-size: 0.72rem;">Procedimento</label>
+              <select id="filter-proc-id" class="form-select" style="height: 38px; font-size: 0.82rem;">
+                <option value="">Todos os procedimentos</option>
+              </select>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <div>
+                <label class="form-label" style="font-size: 0.72rem;">Dente FDI</label>
+                <input type="text" id="filter-tooth" class="form-control" placeholder="Ex: 11, 21" style="height: 38px; font-size: 0.82rem;" />
+              </div>
+              <div>
+                <label class="form-label" style="font-size: 0.72rem;">Observações</label>
+                <input type="text" id="filter-text" class="form-control" placeholder="Buscar texto..." style="height: 38px; font-size: 0.82rem;" />
+              </div>
+            </div>
+            <div style="display: flex; gap: 8px; margin-top: 6px;">
+              <button class="btn btn-sm btn-secondary" onclick="App.clearFilters()" style="flex: 1;">Limpar Filtros</button>
+              <button class="btn btn-sm btn-primary" onclick="App.applyFilters()" style="flex: 1;">Aplicar Filtros</button>
+            </div>
+          </div>
+        </details>
+
+        <!-- RESUMO DA LISTAGEM -->
+        <div style="display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 700; color: var(--text-muted); margin-bottom: 10px;">
+          <span id="prod-records-count">0 registros encontrados</span>
+          <span id="prod-total-filtered-revenue">Total: R$ 0,00</span>
+        </div>
+
+        <div class="records-list" id="records-container">
+          <!-- RENDERIZAÇÃO DOS REGISTROS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 4: RENTABILIDADE (TOP 3 & CONSOLIDADO) -->
+    <section id="view-rentability" class="view-section">
+      <div class="card">
+        <div class="card-title">Top 3 Procedimentos Mais Rentáveis</div>
+        <div style="display: flex; gap: 6px; margin-bottom: 12px;">
+          <button class="btn btn-sm btn-primary" id="btn-rent-month" onclick="App.setRentabilityPeriod('month')">Mês Atual</button>
+          <button class="btn btn-sm btn-secondary" id="btn-rent-all" onclick="App.setRentabilityPeriod('all')">Toda a Base</button>
+        </div>
+        <div id="top-rentability-list">
+          <!-- TOP 3 ITEMS -->
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Todos os Procedimentos (R$/Minuto)</div>
+        <div id="all-rentability-list"></div>
+      </div>
+    </section>
+
+    <!-- VIEW 5: META MENSAL -->
+    <section id="view-target" class="view-section">
+      <div class="card">
+        <div class="card-title">Definição de Meta Mensal</div>
+        <form onsubmit="App.saveTarget(event)">
+          <div class="form-group">
+            <label class="form-label">Mês de Referência <span class="req">*</span></label>
+            <div class="custom-date-picker-input" onclick="DentalMonthPicker.open('target-month-input')">
+              <span id="target-month-input-display">Agosto de 2026</span>
+              <svg viewBox="0 0 24 24"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>
+            </div>
+            <input type="hidden" id="target-month-input" value="" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Valor da Meta (R$) <span class="req">*</span></label>
+            <input type="number" step="0.01" min="0" id="target-value-input" class="form-control" placeholder="Ex: 25000" required />
+          </div>
+          <button type="submit" class="btn btn-primary">Salvar Meta do Mês</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Histórico de Metas</div>
+        <div id="targets-history-list"></div>
+      </div>
+    </section>
+
+    <!-- VIEW 6: ADMINISTRAÇÃO -->
+    <section id="view-admin" class="view-section">
+      <!-- TELA DE LOGIN ADMIN -->
+      <div class="card" id="admin-auth-card">
+        <div class="card-title">Acesso Restrito à Administração</div>
+        <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 14px;" id="admin-auth-desc">
+          Digite sua senha administrativa para acessar as configurações de procedimentos e clínicas.
+        </p>
+        <form onsubmit="App.handleAdminAuth(event)">
+          <div class="form-group">
+            <label class="form-label" id="admin-password-label">Senha Administrativa</label>
+            <input type="password" id="admin-password-input" class="form-control" placeholder="Digite a senha..." required />
+          </div>
+          <div class="form-group" id="admin-confirm-pw-group" style="display: none;">
+            <label class="form-label">Confirme a Senha</label>
+            <input type="password" id="admin-password-confirm" class="form-control" placeholder="Confirme a senha..." />
+          </div>
+          <button type="submit" class="btn btn-primary" id="btn-admin-login">Entrar</button>
+        </form>
+      </div>
+
+      <!-- PAINEL ADMIN LIBERADO -->
+      <div id="admin-content-panel" style="display: none;">
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div class="card-title" style="margin-bottom: 0;">Gestão de Procedimentos</div>
+            <button class="btn btn-sm btn-primary" onclick="App.openNewProcedureModal()">+ Novo Procedimento</button>
+          </div>
+          <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px;">
+            * Ao alterar valores de procedimentos, os atendimentos já salvos manterão intactos os seus valores históricos.
+          </p>
+          <div id="admin-procedures-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Configurações do Estabelecimento e Profissional</div>
+          <form onsubmit="App.saveSettings(event)">
+            <div class="form-group">
+              <label class="form-label">Nome da Clínica</label>
+              <input type="text" id="setting-clinic-name" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nome do Profissional Responsável</label>
+              <input type="text" id="setting-prof-name" class="form-control" required />
+            </div>
+            <button type="submit" class="btn btn-primary">Salvar Configurações</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Backup e Segurança Local</div>
+          <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px;">
+            Seus dados ficam 100% gravados neste aparelho (IndexedDB local). Exporte uma cópia JSON de segurança para salvar em outro local.
+          </p>
+          <div style="display: flex; gap: 10px;">
+            <button class="btn btn-primary" onclick="App.exportBackup()">Exportar Backup (JSON)</button>
+            <button class="btn btn-secondary" onclick="document.getElementById('import-file').click()">Restaurar Backup</button>
+            <input type="file" id="import-file" accept=".json" style="display: none;" onchange="App.importBackup(event)" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- BOTTOM NAVIGATION -->
+  <nav class="bottom-nav">
+    <div class="nav-item active" onclick="App.navigate('dashboard')" id="nav-btn-dashboard">
+      <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      <span>Painel</span>
+    </div>
+    <div class="nav-item nav-fab" onclick="App.navigate('new')" id="nav-btn-new">
+      <div class="fab-circle">
+        <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+      </div>
+      <span>Novo</span>
+    </div>
+    <div class="nav-item" onclick="App.navigate('production')" id="nav-btn-production">
+      <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+      <span>Produção</span>
+    </div>
+    <div class="nav-item" onclick="App.openMoreMenu()" id="nav-btn-more">
+      <svg viewBox="0 0 24 24"><path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+      <span>Mais</span>
+    </div>
+  </nav>
+
+  <!-- MODAL EXTRATO / PDF DE IMPRESSÃO -->
+  <div class="modal-backdrop" id="modal-extract" onclick="if(event.target===this)App.closeModal('modal-extract')">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.25rem;">📄</span>
+          <span>Extrato de Produção</span>
+        </div>
+        <button type="button" class="modal-close-btn" onclick="App.closeModal('modal-extract')">✕</button>
+      </div>
+      
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 12px;">
+        Selecione quais atendimentos deseja incluir no extrato/relatório:
+      </p>
+
+      <!-- OPÇÃO 1: MÊS ATUAL -->
+      <div class="extract-scope-card selected" id="extract-card-month" onclick="App.setExtractScope('month')">
+        <div class="extract-radio-circle"></div>
+        <div style="flex: 1;">
+          <div style="font-weight: 700; font-size: 0.88rem; color: var(--text-main);" id="extract-label-month">Mês de Produção Atual</div>
+          <div style="font-size: 0.74rem; color: var(--text-muted);" id="extract-stats-month">Carregando dados...</div>
+        </div>
+      </div>
+
+      <!-- OPÇÃO 2: FILTROS ATUAIS -->
+      <div class="extract-scope-card" id="extract-card-filtered" onclick="App.setExtractScope('filtered')">
+        <div class="extract-radio-circle"></div>
+        <div style="flex: 1;">
+          <div style="font-weight: 700; font-size: 0.88rem; color: var(--text-main);">Filtros Aplicados na Tela</div>
+          <div style="font-size: 0.74rem; color: var(--text-muted);" id="extract-stats-filtered">Carregando dados...</div>
+        </div>
+      </div>
+
+      <!-- OPÇÃO 3: TODOS OS REGISTROS -->
+      <div class="extract-scope-card" id="extract-card-all" onclick="App.setExtractScope('all')">
+        <div class="extract-radio-circle"></div>
+        <div style="flex: 1;">
+          <div style="font-weight: 700; font-size: 0.88rem; color: var(--text-main);">Toda a Produção (Histórico Completo)</div>
+          <div style="font-size: 0.74rem; color: var(--text-muted);" id="extract-stats-all">Carregando dados...</div>
+        </div>
+      </div>
+
+      <!-- RESUMO ESCOLHIDO -->
+      <div class="extract-preview-box">
+        <div><strong id="extract-sum-qty" style="font-size: 1rem; color: var(--primary);">0</strong><br><span style="font-size: 0.68rem; color: var(--text-muted);">Atendimentos</span></div>
+        <div><strong id="extract-sum-rev" style="font-size: 1rem; color: var(--primary);">R$ 0,00</strong><br><span style="font-size: 0.68rem; color: var(--text-muted);">Faturamento</span></div>
+        <div><strong id="extract-sum-rent" style="font-size: 1rem; color: var(--primary);">R$ 0,00/min</strong><br><span style="font-size: 0.68rem; color: var(--text-muted);">Rentabilidade</span></div>
+      </div>
+
+      <!-- BOTÕES DE AÇÃO -->
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <button type="button" class="btn btn-primary" style="padding: 12px; font-weight: 700;" onclick="App.executePrintExtract()">
+          <svg style="width: 18px; height: 18px; fill: currentColor;" viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+          Imprimir / Salvar em PDF
+        </button>
+        <div style="display: flex; gap: 8px;">
+          <button type="button" class="btn btn-secondary" style="flex: 1; font-size: 0.8rem; padding: 10px 6px;" onclick="App.executeExportCsv()">
+            📊 Exportar CSV
+          </button>
+          <button type="button" class="btn btn-secondary" style="flex: 1; font-size: 0.8rem; padding: 10px 6px;" onclick="App.executePreviewExtract()">
+            👁️ Ver na Tela
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL VISUALIZAR EXTRATO NA TELA -->
+  <div class="modal-backdrop" id="modal-extract-preview" onclick="if(event.target===this)App.closeModal('modal-extract-preview')">
+    <div class="modal-box" style="max-width: 520px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.25rem;">📋</span>
+          <span id="preview-extract-title">Extrato de Produção</span>
+        </div>
+        <button type="button" class="modal-close-btn" onclick="App.closeModal('modal-extract-preview')">✕</button>
+      </div>
+
+      <div id="extract-preview-container" style="max-height: 55vh; overflow-y: auto; margin-bottom: 14px;">
+        <!-- Tabela renderizada dinamicamente -->
+      </div>
+
+      <div style="display: flex; gap: 10px;">
+        <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="App.closeModal('modal-extract-preview'); App.openExtractModal();">Voltar</button>
+        <button type="button" class="btn btn-primary" style="flex: 1;" onclick="App.executePrintExtract()">
+          <svg style="width: 16px; height: 16px; fill: currentColor;" viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+          Imprimir / PDF
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL ADICIONAR / EDITAR PROCEDIMENTO -->
+  <div class="modal-backdrop" id="modal-proc" onclick="if(event.target===this)App.closeModal('modal-proc')">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span id="modal-proc-title">Procedimento</span>
+        <button type="button" class="modal-close-btn" onclick="App.closeModal('modal-proc')">✕</button>
+      </div>
+      <form onsubmit="App.saveProcedureModal(event)">
+        <input type="hidden" id="proc-modal-id" />
+        <div class="form-group">
+          <label class="form-label">Nome do Procedimento <span class="req">*</span></label>
+          <input type="text" id="proc-modal-name" class="form-control" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Valor Padrão (R$) <span class="req">*</span></label>
+          <input type="number" step="0.01" min="0" id="proc-modal-price" class="form-control" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Necessita Seleção de Dente?</label>
+          <select id="proc-modal-need-teeth" class="form-select">
+            <option value="true">Sim (Odontograma)</option>
+            <option value="false">Não (Geral / Procedimento de Arcada)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select id="proc-modal-active" class="form-select">
+            <option value="true">Ativo</option>
+            <option value="false">Inativo</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Salvar Procedimento</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL MENU MAIS -->
+  <div class="modal-backdrop" id="modal-more" onclick="if(event.target===this)App.closeModal('modal-more')">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.25rem;">✨</span>
+          <span>Recursos & Gestão DentalPro</span>
+        </div>
+        <button type="button" class="modal-close-btn" onclick="App.closeModal('modal-more')">✕</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <div class="menu-action-tile" onclick="App.navigate('rentability'); App.closeModal('modal-more');">
+          <div class="menu-tile-icon" style="color: #2E7D32;">📈</div>
+          <div class="menu-tile-content">
+            <div class="menu-tile-title">Análise de Rentabilidade (Top 3)</div>
+            <div class="menu-tile-desc">Procedimentos mais lucrativos por minuto trabalhado</div>
+          </div>
+          <div class="menu-tile-arrow">›</div>
+        </div>
+
+        <div class="menu-action-tile" onclick="App.navigate('target'); App.closeModal('modal-more');">
+          <div class="menu-tile-icon" style="color: #D9305D;">🎯</div>
+          <div class="menu-tile-content">
+            <div class="menu-tile-title">Meta Mensal & Histórico</div>
+            <div class="menu-tile-desc">Acompanhe seu faturamento contra a meta estipulada</div>
+          </div>
+          <div class="menu-tile-arrow">›</div>
+        </div>
+
+        <div class="menu-action-tile" onclick="App.navigate('admin'); App.closeModal('modal-more');">
+          <div class="menu-tile-icon" style="color: #A61C41;">⚙️</div>
+          <div class="menu-tile-content">
+            <div class="menu-tile-title">Administração & Procedimentos</div>
+            <div class="menu-tile-desc">Tabela de procedimentos, valores, odontograma e segurança</div>
+          </div>
+          <div class="menu-tile-arrow">›</div>
+        </div>
+
+        <div class="menu-action-tile" onclick="App.openExtractModal(); App.closeModal('modal-more');">
+          <div class="menu-tile-icon" style="color: #1976D2;">📄</div>
+          <div class="menu-tile-content">
+            <div class="menu-tile-title">Gerar Extrato / Imprimir PDF</div>
+            <div class="menu-tile-desc">Extrato timbrado da clínica em PDF ou planilha Excel</div>
+          </div>
+          <div class="menu-tile-arrow">›</div>
+        </div>
+
+        <div class="menu-action-tile" onclick="DentalDatePicker.openMonthQuickSelect(); App.closeModal('modal-more');">
+          <div class="menu-tile-icon" style="color: #F57C00;">📅</div>
+          <div class="menu-tile-content">
+            <div class="menu-tile-title">Trocar Mês de Trabalho</div>
+            <div class="menu-tile-desc">Mudar período ativo (atualmente: <span id="menu-current-month-label">Agosto de 2026</span>)</div>
+          </div>
+          <div class="menu-tile-arrow">›</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL SELETOR DE DATA 100% BRASILEIRO (PT-BR) -->
+  <div class="modal-backdrop" id="modal-custom-datepicker">
+    <div class="cal-modal-box">
+      <div class="cal-header-bar">
+        <div class="cal-header-subtitle" id="cal-header-subtitle-text">SELECIONAR DATA</div>
+        <div class="cal-header-selected-date" id="cal-header-date-text">Segunda-feira, 17 de Agosto de 2026</div>
+      </div>
+      
+      <div class="cal-nav-bar">
+        <button type="button" class="cal-nav-btn" onclick="DentalDatePicker.prevMonth()">‹</button>
+        <div class="cal-nav-title" id="cal-current-month-year" onclick="DentalDatePicker.openMonthQuickSelect()">Agosto de 2026 ▾</div>
+        <button type="button" class="cal-nav-btn" onclick="DentalDatePicker.nextMonth()">›</button>
+      </div>
+
+      <div class="cal-weekdays">
+        <div>Dom</div>
+        <div>Seg</div>
+        <div>Ter</div>
+        <div>Qua</div>
+        <div>Qui</div>
+        <div>Sex</div>
+        <div>Sáb</div>
+      </div>
+
+      <div class="cal-grid" id="cal-days-grid">
+        <!-- Dias renderizados via JS -->
+      </div>
+
+      <div class="cal-actions">
+        <button type="button" class="cal-action-btn" id="cal-btn-clear" style="display: none;" onclick="DentalDatePicker.clearDate()">Limpar</button>
+        <button type="button" class="cal-action-btn" onclick="DentalDatePicker.selectToday()">Hoje</button>
+        <div style="flex: 1;"></div>
+        <button type="button" class="cal-action-btn" onclick="DentalDatePicker.close()">Cancelar</button>
+        <button type="button" class="cal-action-btn primary" onclick="DentalDatePicker.confirm()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL SELETOR DE MÊS / ANO 100% BRASILEIRO (PT-BR) -->
+  <div class="modal-backdrop" id="modal-custom-monthpicker">
+    <div class="cal-modal-box" style="padding: 16px;">
+      <div class="modal-header" style="margin-bottom: 8px;">
+        <span id="monthpicker-modal-title">Selecionar Mês</span>
+        <span style="cursor: pointer; font-size: 1.2rem; font-weight: bold;" onclick="DentalMonthPicker.close()">✕</span>
+      </div>
+
+      <div class="month-year-nav">
+        <button type="button" class="cal-nav-btn" onclick="DentalMonthPicker.prevYear()">‹</button>
+        <span style="font-size: 1.15rem; font-weight: 800; color: var(--primary);" id="monthpicker-year-display">2026</span>
+        <button type="button" class="cal-nav-btn" onclick="DentalMonthPicker.nextYear()">›</button>
+      </div>
+
+      <div class="month-grid" id="monthpicker-months-grid">
+        <!-- 12 meses em português -->
+      </div>
+
+      <div style="display: flex; gap: 8px; margin-top: 12px;">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="DentalMonthPicker.selectCurrentMonth()">Mês Atual</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="DentalMonthPicker.confirm()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL SELETOR DE HORÁRIO 100% BRASILEIRO 24H (PT-BR) -->
+  <div class="modal-backdrop" id="modal-custom-timepicker">
+    <div class="cal-modal-box">
+      <div class="time-picker-header">
+        <div class="time-picker-title">SELECIONAR HORÁRIO (24 HORAS)</div>
+        <div class="time-picker-display">
+          <button type="button" class="time-digit-btn active" id="time-picker-hr-btn" onclick="DentalTimePicker.setTab('hours')">11</button>
+          <span style="color: #FFF; user-select: none;">:</span>
+          <button type="button" class="time-digit-btn" id="time-picker-min-btn" onclick="DentalTimePicker.setTab('minutes')">23</button>
+        </div>
+      </div>
+
+      <div class="time-preset-bar">
+        <div class="time-preset-chip" onclick="DentalTimePicker.selectNow()">⚡ Agora</div>
+        <div class="time-preset-chip" onclick="DentalTimePicker.adjustMinutes(15)">+15 min</div>
+        <div class="time-preset-chip" onclick="DentalTimePicker.adjustMinutes(30)">+30 min</div>
+        <div class="time-preset-chip" onclick="DentalTimePicker.setFixedTime(8, 0)">08:00</div>
+        <div class="time-preset-chip" onclick="DentalTimePicker.setFixedTime(9, 0)">09:00</div>
+        <div class="time-preset-chip" onclick="DentalTimePicker.setFixedTime(10, 0)">10:00</div>
+        <div class="time-preset-chip" onclick="DentalTimePicker.setFixedTime(14, 0)">14:00</div>
+        <div class="time-preset-chip" onclick="DentalTimePicker.setFixedTime(15, 0)">15:00</div>
+        <div class="time-preset-chip" onclick="DentalTimePicker.setFixedTime(16, 0)">16:00</div>
+      </div>
+
+      <div class="time-tabs-bar">
+        <button type="button" class="time-tab-btn active" id="tab-btn-hours" onclick="DentalTimePicker.setTab('hours')">Horas (00 - 23)</button>
+        <button type="button" class="time-tab-btn" id="tab-btn-minutes" onclick="DentalTimePicker.setTab('minutes')">Minutos (00 - 59)</button>
+      </div>
+
+      <div id="time-view-hours">
+        <div class="time-grid-24h" id="time-hours-grid">
+          <!-- 00..23 em grade 6x4 -->
+        </div>
+      </div>
+
+      <div id="time-view-minutes" style="display: none;">
+        <div class="time-minutes-grid" id="time-minutes-grid">
+          <!-- 00, 05, 10... 55 -->
+        </div>
+        <div class="time-stepper-row">
+          <button type="button" class="time-step-btn" onclick="DentalTimePicker.adjustMinutes(-1)">-1 min</button>
+          <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);" id="time-fine-tune-text">Ajuste de Minuto</span>
+          <button type="button" class="time-step-btn" onclick="DentalTimePicker.adjustMinutes(1)">+1 min</button>
+        </div>
+      </div>
+
+      <div class="cal-actions">
+        <button type="button" class="cal-action-btn" onclick="DentalTimePicker.selectNow()">Agora</button>
+        <div style="flex: 1;"></div>
+        <button type="button" class="cal-action-btn" onclick="DentalTimePicker.close()">Cancelar</button>
+        <button type="button" class="cal-action-btn primary" onclick="DentalTimePicker.confirm()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ÁREA DE IMPRESSÃO DO RELATÓRIO PDF -->
+  <div id="print-area" class="print-only"></div>
+
+  <!-- SCRIPT INTEGRAL DO DENTALPRO (CONFIGURAÇÕES, INDEXEDDB, REGRAS DE NEGÓCIO, UI) -->
+  <script>
+    /* ==========================================================================
+       DENTALPRO — SISTEMA MOBILE DE REGISTRO E GESTÃO ODONTOLÓGICA
+       Desenvolvido para Dental Clínica Dr. Jovane Dantas
+       ========================================================================== */
+
+    const INITIAL_PROCEDURES = [
+      { id: 'p1', name: 'Raspagem (inclui rem orto)', price: 15.00, active: true, needsTeeth: true },
+      { id: 'p2', name: 'Conserto prótese', price: 10.00, active: true, needsTeeth: false },
+      { id: 'p3', name: 'Enxerto osso particulado', price: 10.00, active: true, needsTeeth: true },
+      { id: 'p4', name: 'Enxerto atraumático (1.0/2.0)', price: 10.00, active: true, needsTeeth: true },
+      { id: 'p5', name: 'Cirurgia incluso', price: 10.00, active: true, needsTeeth: true },
+      { id: 'p6', name: 'Cirurgia sorriso', price: 10.00, active: true, needsTeeth: false },
+      { id: 'p7', name: 'Preparo de Barra clip', price: 10.00, active: true, needsTeeth: false },
+      { id: 'p8', name: 'Fresagem de elemento de Natal', price: 10.00, active: true, needsTeeth: true },
+      { id: 'p9', name: 'Moldagem sobre implante', price: 5.00, active: true, needsTeeth: true },
+      { id: 'p10', name: 'Coroa Provisória', price: 5.00, active: true, needsTeeth: true },
+      { id: 'p11', name: 'Preparo de núcleo', price: 5.00, active: true, needsTeeth: true },
+      { id: 'p12', name: 'Exodontia', price: 5.00, active: true, needsTeeth: true },
+      { id: 'p13', name: 'Reabertura por cirurgia', price: 5.00, active: true, needsTeeth: true },
+      { id: 'p14', name: 'Confecção de Placa Mordida', price: 5.00, active: true, needsTeeth: false },
+      { id: 'p15', name: 'Moldagem e vazamento Placa', price: 5.00, active: true, needsTeeth: false },
+      { id: 'p16', name: 'Moldagem e vazamento PG', price: 5.00, active: true, needsTeeth: false },
+      { id: 'p17', name: 'Clareamento Total Moldagem', price: 5.00, active: true, needsTeeth: false },
+      { id: 'p18', name: 'Instalação de Núcleo', price: 5.00, active: true, needsTeeth: true },
+      { id: 'p19', name: 'Tomografia', price: 5.00, active: true, needsTeeth: false },
+      { id: 'p20', name: 'Apicectomia', price: 5.00, active: true, needsTeeth: true },
+      { id: 'p21', name: 'Confecção e adaptação de placa', price: 5.00, active: true, needsTeeth: false },
+      { id: 'p22', name: 'Frenectomia', price: 5.00, active: true, needsTeeth: false },
+      { id: 'p23', name: 'RX panorâmico', price: 3.00, active: true, needsTeeth: false },
+      { id: 'p24', name: 'Fundição Núcleo', price: 3.00, active: true, needsTeeth: true },
+      { id: 'p25', name: 'Só auxiliar cirurgia implante', price: 2.00, active: true, needsTeeth: false },
+      { id: 'p26', name: 'Retirada de Pontos', price: 2.00, active: true, needsTeeth: false },
+      { id: 'p27', name: 'Cimentar Provisório', price: 2.00, active: true, needsTeeth: true },
+      { id: 'p28', name: 'Prova de Ponte Fixa', price: 2.00, active: true, needsTeeth: true },
+      { id: 'p29', name: 'Moldagem e vazamento contenção', price: 5.00, active: true, needsTeeth: false },
+      { id: 'p30', name: 'Amarria (4 a 8 dentes)', price: 5.00, active: true, needsTeeth: true },
+      { id: 'p31', name: 'Documentação Orto', price: 5.00, active: true, needsTeeth: false },
+      { id: 'p32', name: 'Conserto Prótese/ajuste', price: 5.00, active: true, needsTeeth: false },
+      { id: 'p33', name: 'Clareamento Total LASER (sessão)', price: 5.00, active: true, needsTeeth: false },
+      { id: 'p34', name: 'Coroa ou Faceta CEREC', price: 30.00, active: true, needsTeeth: true },
+      { id: 'p35', name: 'Ponte metalo cerâmica (da mold)', price: 30.00, active: true, needsTeeth: true },
+      { id: 'p36', name: 'PAE (por arcada)', price: 30.00, active: true, needsTeeth: false },
+      { id: 'p37', name: 'Adaptação protocolo (elemento)', price: 30.00, active: true, needsTeeth: true },
+      { id: 'p38', name: 'Enxerto sinus (seio maxilar)', price: 30.00, active: true, needsTeeth: false },
+      { id: 'p39', name: 'Enxerto em bloco (com parafuso)', price: 30.00, active: true, needsTeeth: true },
+      { id: 'p40', name: 'Acrilização de prótese', price: 30.00, active: true, needsTeeth: false },
+      { id: 'p41', name: 'Instalação de prótese', price: 30.00, active: true, needsTeeth: false },
+      { id: 'p42', name: 'Limpeza de Protocolo', price: 30.00, active: true, needsTeeth: false },
+      { id: 'p43', name: 'Onlay / Inlay', price: 25.00, active: true, needsTeeth: true },
+      { id: 'p44', name: 'Montagem de prótese em cera', price: 20.00, active: true, needsTeeth: false },
+      { id: 'p45', name: 'Adaptação de prótese', price: 20.00, active: true, needsTeeth: false },
+      { id: 'p46', name: 'Vazamento PG', price: 5.00, active: true, needsTeeth: false }
+    ];
+
+    const FDI_TEETH = {
+      upper: [18, 17, 16, 15, 14, 13, 12, 11, 21, 22, 23, 24, 25, 26, 27, 28],
+      lower: [48, 47, 46, 45, 44, 43, 42, 41, 31, 32, 33, 34, 35, 36, 37, 38]
+    };
+
+    // --- INDEXEDDB LAYER ---
+    const DB_NAME = 'DentalProDB';
+    const DB_VERSION = 1;
+
+    class DentalDB {
+      static open() {
+        return new Promise((resolve, reject) => {
+          const req = indexedDB.open(DB_NAME, DB_VERSION);
+          req.onupgradeneeded = (e) => {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains('settings')) db.createObjectStore('settings', { keyPath: 'key' });
+            if (!db.objectStoreNames.contains('procedures')) db.createObjectStore('procedures', { keyPath: 'id' });
+            if (!db.objectStoreNames.contains('targets')) db.createObjectStore('targets', { keyPath: 'month' });
+            if (!db.objectStoreNames.contains('records')) {
+              const recStore = db.createObjectStore('records', { keyPath: 'id' });
+              recStore.createIndex('date', 'date', { unique: false });
+              recStore.createIndex('professionalId', 'professionalId', { unique: false });
+            }
+          };
+          req.onsuccess = () => resolve(req.result);
+          req.onerror = () => reject(req.error);
+        });
+      }
+
+      static async getAll(storeName) {
+        const db = await this.open();
+        return new Promise((resolve, reject) => {
+          const tx = db.transaction(storeName, 'readonly');
+          const store = tx.objectStore(storeName);
+          const req = store.getAll();
+          req.onsuccess = () => resolve(req.result || []);
+          req.onerror = () => reject(req.error);
+        });
+      }
+
+      static async get(storeName, key) {
+        const db = await this.open();
+        return new Promise((resolve, reject) => {
+          const tx = db.transaction(storeName, 'readonly');
+          const store = tx.objectStore(storeName);
+          const req = store.get(key);
+          req.onsuccess = () => resolve(req.result);
+          req.onerror = () => reject(req.error);
+        });
+      }
+
+      static async put(storeName, value) {
+        const db = await this.open();
+        return new Promise((resolve, reject) => {
+          const tx = db.transaction(storeName, 'readwrite');
+          const store = tx.objectStore(storeName);
+          const req = store.put(value);
+          req.onsuccess = () => resolve(req.result);
+          req.onerror = () => reject(req.error);
+        });
+      }
+
+      static async delete(storeName, key) {
+        const db = await this.open();
+        return new Promise((resolve, reject) => {
+          const tx = db.transaction(storeName, 'readwrite');
+          const store = tx.objectStore(storeName);
+          const req = store.delete(key);
+          req.onsuccess = () => resolve();
+          req.onerror = () => reject(req.error);
+        });
+      }
+
+      static async clearAll() {
+        const db = await this.open();
+        return new Promise((resolve, reject) => {
+          const tx = db.transaction(['settings', 'procedures', 'targets', 'records'], 'readwrite');
+          tx.objectStore('settings').clear();
+          tx.objectStore('procedures').clear();
+          tx.objectStore('targets').clear();
+          tx.objectStore('records').clear();
+          tx.oncomplete = () => resolve();
+          tx.onerror = () => reject(tx.error);
+        });
+      }
+    }
+
+    // --- FORMATADORES EM PORTUGUÊS BRASILEIRO (PT-BR) E MOEDA (R$ REAL) ---
+    const PT_BR_MONTHS = [
+      'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+      'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+    ];
+    const PT_BR_MONTHS_SHORT = [
+      'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+      'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+    ];
+    const PT_BR_WEEKDAYS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+    const PT_BR_FULL_WEEKDAYS = [
+      'Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira',
+      'Quinta-feira', 'Sexta-feira', 'Sábado'
+    ];
+
+    function formatDateBR(isoStr) {
+      if (!isoStr) return 'DD/MM/AAAA';
+      const parts = isoStr.split('-');
+      if (parts.length === 3) {
+        return `${parts[2]}/${parts[1]}/${parts[0]}`;
+      }
+      return isoStr;
+    }
+
+    function formatMonthBR(yyyyMm) {
+      if (!yyyyMm) return '';
+      const [y, m] = yyyyMm.split('-');
+      const mIndex = parseInt(m, 10) - 1;
+      const mName = PT_BR_MONTHS[mIndex] || m;
+      return `${mName} de ${y}`;
+    }
+
+    function formatFullDateBR(isoStr) {
+      if (!isoStr) return 'Selecione uma data';
+      const [y, m, d] = isoStr.split('-').map(Number);
+      const dateObj = new Date(y, m - 1, d);
+      const weekDay = PT_BR_FULL_WEEKDAYS[dateObj.getDay()];
+      const mName = PT_BR_MONTHS[m - 1];
+      return `${weekDay}, ${d} de ${mName} de ${y}`;
+    }
+
+    function formatBRL(value) {
+      const num = typeof value === 'number' ? value : (parseFloat(value) || 0);
+      return new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(num);
+    }
+
+    function formatNumberBR(value, decimals = 0) {
+      const num = typeof value === 'number' ? value : (parseFloat(value) || 0);
+      return new Intl.NumberFormat('pt-BR', {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      }).format(num);
+    }
+
+    async function hashPassword(text) {
+      const msgBuffer = new TextEncoder().encode(text);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    // --- CONTROLLER DE CALENDÁRIO 100% BRASILEIRO (PT-BR) ---
+    const DentalDatePicker = {
+      activeInputId: null,
+      viewYear: 2026,
+      viewMonth: 7, // 0-indexed (7 = Agosto)
+      selectedDateStr: '',
+      allowClear: false,
+
+      open(inputId, options = {}) {
+        this.activeInputId = inputId;
+        this.allowClear = !!options.allowClear;
+        
+        const currentVal = document.getElementById(inputId).value || '';
+        if (currentVal && /^\d{4}-\d{2}-\d{2}$/.test(currentVal)) {
+          this.selectedDateStr = currentVal;
+          const [y, m] = currentVal.split('-').map(Number);
+          this.viewYear = y;
+          this.viewMonth = m - 1;
+        } else {
+          const now = new Date();
+          const y = now.getFullYear();
+          const m = now.getMonth();
+          const d = now.getDate();
+          this.selectedDateStr = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+          this.viewYear = y;
+          this.viewMonth = m;
+        }
+
+        const subtitleEl = document.getElementById('cal-header-subtitle-text');
+        if (subtitleEl) {
+          subtitleEl.textContent = inputId === 'rec-date' ? 'DATA DO ATENDIMENTO' : 'SELECIONE A DATA';
+        }
+
+        document.getElementById('cal-btn-clear').style.display = this.allowClear ? 'inline-block' : 'none';
+        this.render();
+        document.getElementById('modal-custom-datepicker').classList.add('show');
+      },
+
+      render() {
+        const mName = PT_BR_MONTHS[this.viewMonth];
+        document.getElementById('cal-current-month-year').textContent = `${mName} de ${this.viewYear} ▾`;
+        document.getElementById('cal-header-date-text').textContent = formatFullDateBR(this.selectedDateStr);
+
+        const grid = document.getElementById('cal-days-grid');
+        grid.innerHTML = '';
+
+        const now = new Date();
+        const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+        const firstDayOfWeek = new Date(this.viewYear, this.viewMonth, 1).getDay(); // 0 = Dom, 1 = Seg...
+        const daysInCurrentMonth = new Date(this.viewYear, this.viewMonth + 1, 0).getDate();
+        const daysInPrevMonth = new Date(this.viewYear, this.viewMonth, 0).getDate();
+
+        // Dias do mês anterior
+        for (let i = firstDayOfWeek - 1; i >= 0; i--) {
+          const dayNum = daysInPrevMonth - i;
+          const prevM = this.viewMonth === 0 ? 11 : this.viewMonth - 1;
+          const prevY = this.viewMonth === 0 ? this.viewYear - 1 : this.viewYear;
+          const iso = `${prevY}-${String(prevM + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
+          
+          const cell = document.createElement('div');
+          cell.className = 'cal-day-cell other-month';
+          cell.textContent = dayNum;
+          cell.onclick = () => {
+            this.viewYear = prevY;
+            this.viewMonth = prevM;
+            this.selectDate(iso);
+          };
+          grid.appendChild(cell);
+        }
+
+        // Dias do mês atual
+        for (let d = 1; d <= daysInCurrentMonth; d++) {
+          const iso = `${this.viewYear}-${String(this.viewMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+          const cell = document.createElement('div');
+          cell.className = 'cal-day-cell';
+          cell.textContent = d;
+
+          if (iso === todayStr) {
+            cell.classList.add('today');
+          }
+          if (iso === this.selectedDateStr) {
+            cell.classList.add('selected');
+          }
+
+          cell.onclick = () => {
+            this.selectDate(iso);
+          };
+          grid.appendChild(cell);
+        }
+
+        // Preenche até fechar as semanas (múltiplo de 7)
+        const totalCells = firstDayOfWeek + daysInCurrentMonth;
+        const remaining = (7 - (totalCells % 7)) % 7;
+        for (let d = 1; d <= remaining; d++) {
+          const nextM = this.viewMonth === 11 ? 0 : this.viewMonth + 1;
+          const nextY = this.viewMonth === 11 ? this.viewYear + 1 : this.viewYear;
+          const iso = `${nextY}-${String(nextM + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+
+          const cell = document.createElement('div');
+          cell.className = 'cal-day-cell other-month';
+          cell.textContent = d;
+          cell.onclick = () => {
+            this.viewYear = nextY;
+            this.viewMonth = nextM;
+            this.selectDate(iso);
+          };
+          grid.appendChild(cell);
+        }
+      },
+
+      selectDate(iso) {
+        this.selectedDateStr = iso;
+        this.render();
+      },
+
+      prevMonth() {
+        if (this.viewMonth === 0) {
+          this.viewMonth = 11;
+          this.viewYear--;
+        } else {
+          this.viewMonth--;
+        }
+        this.render();
+      },
+
+      nextMonth() {
+        if (this.viewMonth === 11) {
+          this.viewMonth = 0;
+          this.viewYear++;
+        } else {
+          this.viewMonth++;
+        }
+        this.render();
+      },
+
+      openMonthQuickSelect() {
+        DentalMonthPicker.openForDatePicker(this.viewYear, this.viewMonth, (y, m) => {
+          this.viewYear = y;
+          this.viewMonth = m;
+          this.render();
+        });
+      },
+
+      selectToday() {
+        const now = new Date();
+        const y = now.getFullYear();
+        const m = now.getMonth();
+        const d = now.getDate();
+        this.viewYear = y;
+        this.viewMonth = m;
+        this.selectedDateStr = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        this.render();
+      },
+
+      clearDate() {
+        if (this.activeInputId) {
+          const hiddenInput = document.getElementById(this.activeInputId);
+          if (hiddenInput) hiddenInput.value = '';
+          const displaySpan = document.getElementById(`${this.activeInputId}-display`);
+          if (displaySpan) displaySpan.textContent = 'DD/MM/AAAA';
+        }
+        this.close();
+      },
+
+      confirm() {
+        if (this.activeInputId && this.selectedDateStr) {
+          const hiddenInput = document.getElementById(this.activeInputId);
+          if (hiddenInput) hiddenInput.value = this.selectedDateStr;
+          const displaySpan = document.getElementById(`${this.activeInputId}-display`);
+          if (displaySpan) displaySpan.textContent = formatDateBR(this.selectedDateStr);
+        }
+        this.close();
+      },
+
+      close() {
+        document.getElementById('modal-custom-datepicker').classList.remove('show');
+      }
+    };
+
+    // --- CONTROLLER DE SELETOR DE MÊS 100% BRASILEIRO (PT-BR) ---
+    const DentalMonthPicker = {
+      mode: 'input', // 'input', 'header', 'datepicker_callback'
+      targetInputId: null,
+      selectedYear: 2026,
+      selectedMonth: 8, // 1..12
+      callback: null,
+
+      open(inputId) {
+        this.mode = 'input';
+        this.targetInputId = inputId;
+        this.callback = null;
+
+        const val = document.getElementById(inputId).value || '';
+        if (val && /^\d{4}-\d{2}$/.test(val)) {
+          const [y, m] = val.split('-').map(Number);
+          this.selectedYear = y;
+          this.selectedMonth = m;
+        } else {
+          const now = new Date();
+          this.selectedYear = now.getFullYear();
+          this.selectedMonth = now.getMonth() + 1;
+        }
+
+        document.getElementById('monthpicker-modal-title').textContent = 'Selecionar Mês de Referência';
+        this.renderGrid();
+        document.getElementById('modal-custom-monthpicker').classList.add('show');
+      },
+
+      openForHeader() {
+        this.mode = 'header';
+        this.targetInputId = null;
+        this.callback = null;
+
+        const val = App.state.currentMonth || '';
+        if (val && /^\d{4}-\d{2}$/.test(val)) {
+          const [y, m] = val.split('-').map(Number);
+          this.selectedYear = y;
+          this.selectedMonth = m;
+        } else {
+          const now = new Date();
+          this.selectedYear = now.getFullYear();
+          this.selectedMonth = now.getMonth() + 1;
+        }
+
+        document.getElementById('monthpicker-modal-title').textContent = 'Navegar por Mês de Produção';
+        this.renderGrid();
+        document.getElementById('modal-custom-monthpicker').classList.add('show');
+      },
+
+      openForDatePicker(year, month0Indexed, cb) {
+        this.mode = 'datepicker_callback';
+        this.targetInputId = null;
+        this.selectedYear = year;
+        this.selectedMonth = month0Indexed + 1;
+        this.callback = cb;
+
+        document.getElementById('monthpicker-modal-title').textContent = 'Pular para Mês/Ano';
+        this.renderGrid();
+        document.getElementById('modal-custom-monthpicker').classList.add('show');
+      },
+
+      renderGrid() {
+        document.getElementById('monthpicker-year-display').textContent = this.selectedYear;
+        const grid = document.getElementById('monthpicker-months-grid');
+        grid.innerHTML = '';
+
+        PT_BR_MONTHS.forEach((name, idx) => {
+          const mNum = idx + 1;
+          const cell = document.createElement('div');
+          cell.className = `month-cell ${mNum === this.selectedMonth ? 'selected' : ''}`;
+          cell.textContent = name;
+          cell.onclick = () => {
+            this.selectedMonth = mNum;
+            this.renderGrid();
+          };
+          grid.appendChild(cell);
+        });
+      },
+
+      prevYear() {
+        this.selectedYear--;
+        this.renderGrid();
+      },
+
+      nextYear() {
+        this.selectedYear++;
+        this.renderGrid();
+      },
+
+      selectCurrentMonth() {
+        const now = new Date();
+        this.selectedYear = now.getFullYear();
+        this.selectedMonth = now.getMonth() + 1;
+        this.renderGrid();
+      },
+
+      confirm() {
+        const monthStr = `${this.selectedYear}-${String(this.selectedMonth).padStart(2, '0')}`;
+        
+        if (this.mode === 'header') {
+          App.state.currentMonth = monthStr;
+          App.updateHeaderAndBranding();
+          App.refreshAllIndicators();
+        } else if (this.mode === 'input' && this.targetInputId) {
+          const input = document.getElementById(this.targetInputId);
+          if (input) input.value = monthStr;
+          const display = document.getElementById(`${this.targetInputId}-display`);
+          if (display) display.textContent = formatMonthBR(monthStr);
+        } else if (this.mode === 'datepicker_callback' && typeof this.callback === 'function') {
+          this.callback(this.selectedYear, this.selectedMonth - 1);
+        }
+
+        this.close();
+      },
+
+      close() {
+        document.getElementById('modal-custom-monthpicker').classList.remove('show');
+      }
+    };
+
+    // --- CONTROLLER DE HORÁRIO 100% BRASILEIRO 24H (PT-BR) ---
+    const DentalTimePicker = {
+      activeInputId: null,
+      activeTab: 'hours', // 'hours' | 'minutes'
+      selectedHour: 11, // 0..23
+      selectedMinute: 23, // 0..59
+
+      open(inputId) {
+        this.activeInputId = inputId;
+        this.activeTab = 'hours';
+
+        const currentVal = document.getElementById(inputId).value || '';
+        if (currentVal && /^\d{1,2}:\d{2}$/.test(currentVal)) {
+          const [h, m] = currentVal.split(':').map(Number);
+          this.selectedHour = Math.min(23, Math.max(0, h));
+          this.selectedMinute = Math.min(59, Math.max(0, m));
+        } else {
+          const now = new Date();
+          this.selectedHour = now.getHours();
+          this.selectedMinute = now.getMinutes();
+        }
+
+        this.render();
+        document.getElementById('modal-custom-timepicker').classList.add('show');
+      },
+
+      setTab(tab) {
+        this.activeTab = tab;
+        this.render();
+      },
+
+      render() {
+        const hrStr = String(this.selectedHour).padStart(2, '0');
+        const minStr = String(this.selectedMinute).padStart(2, '0');
+
+        const hrBtn = document.getElementById('time-picker-hr-btn');
+        const minBtn = document.getElementById('time-picker-min-btn');
+        const tabHr = document.getElementById('tab-btn-hours');
+        const tabMin = document.getElementById('tab-btn-minutes');
+        const viewHr = document.getElementById('time-view-hours');
+        const viewMin = document.getElementById('time-view-minutes');
+
+        hrBtn.textContent = hrStr;
+        minBtn.textContent = minStr;
+
+        if (this.activeTab === 'hours') {
+          hrBtn.classList.add('active');
+          minBtn.classList.remove('active');
+          tabHr.classList.add('active');
+          tabMin.classList.remove('active');
+          viewHr.style.display = 'block';
+          viewMin.style.display = 'none';
+
+          const grid = document.getElementById('time-hours-grid');
+          grid.innerHTML = '';
+          for (let h = 0; h < 24; h++) {
+            const cell = document.createElement('div');
+            const hFormatted = String(h).padStart(2, '0');
+            cell.className = `time-cell ${h === this.selectedHour ? 'selected' : ''}`;
+            cell.textContent = hFormatted;
+            cell.onclick = () => {
+              this.selectedHour = h;
+              this.setTab('minutes');
+            };
+            grid.appendChild(cell);
+          }
+        } else {
+          hrBtn.classList.remove('active');
+          minBtn.classList.add('active');
+          tabHr.classList.remove('active');
+          tabMin.classList.add('active');
+          viewHr.style.display = 'none';
+          viewMin.style.display = 'block';
+
+          const grid = document.getElementById('time-minutes-grid');
+          grid.innerHTML = '';
+          const commonMinutes = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
+          commonMinutes.forEach(m => {
+            const cell = document.createElement('div');
+            const mFormatted = String(m).padStart(2, '0');
+            cell.className = `time-minute-cell ${m === this.selectedMinute ? 'selected' : ''}`;
+            cell.textContent = `${mFormatted} min`;
+            cell.onclick = () => {
+              this.selectedMinute = m;
+              this.render();
+            };
+            grid.appendChild(cell);
+          });
+        }
+      },
+
+      selectNow() {
+        const now = new Date();
+        this.selectedHour = now.getHours();
+        this.selectedMinute = now.getMinutes();
+        this.render();
+      },
+
+      adjustMinutes(delta) {
+        let totalMin = this.selectedHour * 60 + this.selectedMinute + delta;
+        if (totalMin < 0) totalMin += 24 * 60;
+        totalMin = totalMin % (24 * 60);
+
+        this.selectedHour = Math.floor(totalMin / 60);
+        this.selectedMinute = totalMin % 60;
+        this.render();
+      },
+
+      setFixedTime(h, m) {
+        this.selectedHour = h;
+        this.selectedMinute = m;
+        this.render();
+      },
+
+      confirm() {
+        const timeStr = `${String(this.selectedHour).padStart(2, '0')}:${String(this.selectedMinute).padStart(2, '0')}`;
+        if (this.activeInputId) {
+          const input = document.getElementById(this.activeInputId);
+          if (input) input.value = timeStr;
+          const display = document.getElementById(`${this.activeInputId}-display`);
+          if (display) display.textContent = timeStr;
+        }
+        this.close();
+      },
+
+      close() {
+        document.getElementById('modal-custom-timepicker').classList.remove('show');
+      }
+    };
+
+    // --- MAIN APPLICATION CONTROLLER ---
+    const App = {
+      state: {
+        currentMonth: '',
+        selectedTeeth: new Set(),
+        procedures: [],
+        records: [],
+        targets: {},
+        settings: {
+          clinicName: 'Dental Clínica Dr. Jovane Dantas',
+          professionalName: 'Dr. Jovane Dantas',
+          adminPasswordHash: ''
+        },
+        isAdminAuthenticated: false,
+        rentabilityPeriod: 'month',
+        activeFilters: null
+      },
+
+      async init() {
+        // Data do dia e mês inicial
+        const now = new Date();
+        const yyyy = now.getFullYear();
+        const mm = String(now.getMonth() + 1).padStart(2, '0');
+        this.state.currentMonth = `${yyyy}-${mm}`;
+
+        // Preenche selects de quantidade (1..10) e tempo (1..90)
+        this.populateDropdowns();
+        this.buildOdontogramUI();
+
+        // Carrega dados do IndexedDB
+        await this.loadDatabase();
+
+        // Se for primeira vez, inicializa procedimentos e configurações
+        if (this.state.procedures.length === 0) {
+          for (const p of INITIAL_PROCEDURES) {
+            await DentalDB.put('procedures', p);
+          }
+          this.state.procedures = await DentalDB.getAll('procedures');
+        }
+
+        // Verifica senha do admin
+        const pwObj = await DentalDB.get('settings', 'adminPasswordHash');
+        if (pwObj) {
+          this.state.settings.adminPasswordHash = pwObj.value;
+        }
+
+        const clinicObj = await DentalDB.get('settings', 'clinicName');
+        if (clinicObj) this.state.settings.clinicName = clinicObj.value;
+
+        const profObj = await DentalDB.get('settings', 'professionalName');
+        if (profObj) this.state.settings.professionalName = profObj.value;
+
+        this.updateHeaderAndBranding();
+        this.updateProcedureSelects();
+        this.resetNewRecordForm();
+        this.refreshAllIndicators();
+
+        console.log('DentalPro inicializado com sucesso.');
+      },
+
+      async loadDatabase() {
+        this.state.procedures = await DentalDB.getAll('procedures');
+        this.state.records = await DentalDB.getAll('records');
+        const targetList = await DentalDB.getAll('targets');
+        this.state.targets = {};
+        targetList.forEach(t => { this.state.targets[t.month] = t.value; });
+      },
+
+      populateDropdowns() {
+        const qtySelect = document.getElementById('rec-qty');
+        qtySelect.innerHTML = '';
+        for (let i = 1; i <= 10; i++) {
+          const opt = document.createElement('option');
+          opt.value = i;
+          opt.textContent = `${i} ${i === 1 ? 'procedimento' : 'procedimentos'}`;
+          qtySelect.appendChild(opt);
+        }
+
+        const durSelect = document.getElementById('rec-duration');
+        durSelect.innerHTML = '';
+        for (let i = 1; i <= 90; i++) {
+          const opt = document.createElement('option');
+          opt.value = i;
+          opt.textContent = `${i} min`;
+          if (i === 30) opt.selected = true;
+          durSelect.appendChild(opt);
+        }
+      },
+
+      buildOdontogramUI() {
+        const upperRow = document.getElementById('odonto-row-upper');
+        const lowerRow = document.getElementById('odonto-row-lower');
+        upperRow.innerHTML = '';
+        lowerRow.innerHTML = '';
+
+        FDI_TEETH.upper.forEach(tooth => {
+          const btn = document.createElement('div');
+          btn.className = 'tooth-btn';
+          btn.textContent = tooth;
+          btn.onclick = () => this.toggleTooth(tooth, btn);
+          upperRow.appendChild(btn);
+        });
+
+        FDI_TEETH.lower.forEach(tooth => {
+          const btn = document.createElement('div');
+          btn.className = 'tooth-btn';
+          btn.textContent = tooth;
+          btn.onclick = () => this.toggleTooth(tooth, btn);
+          lowerRow.appendChild(btn);
+        });
+      },
+
+      toggleTooth(toothNum, btnElem) {
+        if (this.state.selectedTeeth.has(toothNum)) {
+          this.state.selectedTeeth.delete(toothNum);
+          btnElem.classList.remove('selected');
+        } else {
+          this.state.selectedTeeth.add(toothNum);
+          btnElem.classList.add('selected');
+        }
+        this.updateTeethDisplay();
+      },
+
+      updateTeethDisplay() {
+        const arr = Array.from(this.state.selectedTeeth).sort((a, b) => a - b);
+        const display = document.getElementById('rec-teeth-display');
+        display.textContent = arr.length > 0 ? arr.join(', ') : 'Nenhum';
+      },
+
+      updateHeaderAndBranding() {
+        document.getElementById('clinic-name-display').textContent = this.state.settings.clinicName;
+        document.getElementById('dash-prof-name').textContent = this.state.settings.professionalName;
+
+        const [y, m] = this.state.currentMonth.split('-');
+        const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+        const mName = monthNames[parseInt(m, 10) - 1] || m;
+        document.getElementById('current-month-badge').textContent = `${mName} / ${y} ▾`;
+      },
+
+      updateProcedureSelects() {
+        const selForm = document.getElementById('rec-proc-id');
+        const selFilter = document.getElementById('filter-proc-id');
+        
+        selForm.innerHTML = '<option value="">Selecione um procedimento...</option>';
+        selFilter.innerHTML = '<option value="">Todos os procedimentos</option>';
+
+        this.state.procedures
+          .filter(p => p.active)
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p.id;
+            opt.textContent = `${p.name} — ${formatBRL(p.price)}`;
+            selForm.appendChild(opt);
+
+            const optFilter = document.createElement('option');
+            optFilter.value = p.id;
+            optFilter.textContent = p.name;
+            selFilter.appendChild(optFilter);
+          });
+      },
+
+      onProcedureChange() {
+        const procId = document.getElementById('rec-proc-id').value;
+        const proc = this.state.procedures.find(p => p.id === procId);
+        if (!proc) return;
+
+        const teethSection = document.getElementById('rec-teeth-section');
+        if (proc.needsTeeth === false) {
+          teethSection.style.opacity = '0.4';
+        } else {
+          teethSection.style.opacity = '1';
+        }
+
+        this.recalcFormPreview();
+      },
+
+      recalcFormPreview() {
+        const procId = document.getElementById('rec-proc-id').value;
+        const qty = parseInt(document.getElementById('rec-qty').value, 10) || 1;
+        const duration = parseInt(document.getElementById('rec-duration').value, 10) || 30;
+
+        let unitPrice = 0;
+        const proc = this.state.procedures.find(p => p.id === procId);
+        if (proc) {
+          unitPrice = proc.price;
+        }
+
+        const totalRevenue = unitPrice * qty;
+        const rentability = duration > 0 ? totalRevenue / duration : 0;
+
+        document.getElementById('preview-unit-price').textContent = formatBRL(unitPrice);
+        document.getElementById('preview-total-revenue').textContent = formatBRL(totalRevenue);
+        document.getElementById('preview-rentability').textContent = `${formatBRL(rentability)}/min`;
+      },
+
+      resetNewRecordForm() {
+        const now = new Date();
+        const yyyy = now.getFullYear();
+        const mm = String(now.getMonth() + 1).padStart(2, '0');
+        const dd = String(now.getDate()).padStart(2, '0');
+        const hh = String(now.getHours()).padStart(2, '0');
+        const min = String(now.getMinutes()).padStart(2, '0');
+
+        const todayIso = `${yyyy}-${mm}-${dd}`;
+        document.getElementById('rec-id').value = '';
+        document.getElementById('rec-date').value = todayIso;
+        const recDateDisplay = document.getElementById('rec-date-display');
+        if (recDateDisplay) recDateDisplay.textContent = formatDateBR(todayIso);
+
+        document.getElementById('rec-time').value = `${hh}:${min}`;
+        const recTimeDisplay = document.getElementById('rec-time-display');
+        if (recTimeDisplay) recTimeDisplay.textContent = `${hh}:${min}`;
+        document.getElementById('rec-proc-id').value = '';
+        document.getElementById('rec-qty').value = '1';
+        document.getElementById('rec-duration').value = '30';
+        document.getElementById('rec-notes').value = '';
+
+        this.state.selectedTeeth.clear();
+        document.querySelectorAll('.tooth-btn.selected').forEach(b => b.classList.remove('selected'));
+        this.updateTeethDisplay();
+
+        document.getElementById('form-record-title').innerHTML = `
+          <svg style="width: 20px; height: 20px; fill: currentColor;" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+          Novo Registro de Atendimento
+        `;
+        document.getElementById('btn-save-record').textContent = 'Salvar Registro';
+        this.recalcFormPreview();
+      },
+
+      async saveRecord(e) {
+        e.preventDefault();
+
+        const id = document.getElementById('rec-id').value || `rec_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
+        const date = document.getElementById('rec-date').value;
+        const time = document.getElementById('rec-time').value;
+        const procId = document.getElementById('rec-proc-id').value;
+        const qty = parseInt(document.getElementById('rec-qty').value, 10);
+        const duration = parseInt(document.getElementById('rec-duration').value, 10);
+        const notes = document.getElementById('rec-notes').value.trim();
+
+        if (!procId) {
+          this.toast('Selecione um procedimento obrigatório.');
+          return;
+        }
+
+        const proc = this.state.procedures.find(p => p.id === procId);
+        if (!proc) {
+          this.toast('Procedimento inválido ou inativo.');
+          return;
+        }
+
+        const unitPrice = proc.price;
+        const totalRevenue = unitPrice * qty;
+        const rentability = duration > 0 ? totalRevenue / duration : 0;
+        const teeth = Array.from(this.state.selectedTeeth).sort((a, b) => a - b);
+
+        const record = {
+          id,
+          professionalId: 'prof_1',
+          professionalName: this.state.settings.professionalName,
+          date,
+          time,
+          procedureId: procId,
+          procedureName: proc.name,
+          unitPrice, // Snapshot histórico
+          quantity: qty,
+          duration,
+          totalRevenue,
+          rentability,
+          teeth,
+          notes,
+          timestamp: Date.now()
+        };
+
+        await DentalDB.put('records', record);
+        await this.loadDatabase();
+
+        this.toast('Atendimento registrado com sucesso!', 'success');
+        this.resetNewRecordForm();
+        this.refreshAllIndicators();
+        this.navigate('production');
+      },
+
+      editRecord(recId) {
+        const rec = this.state.records.find(r => r.id === recId);
+        if (!rec) return;
+
+        this.navigate('new');
+        document.getElementById('rec-id').value = rec.id;
+        document.getElementById('rec-date').value = rec.date;
+        const recDateDisplay = document.getElementById('rec-date-display');
+        if (recDateDisplay) recDateDisplay.textContent = formatDateBR(rec.date);
+
+        document.getElementById('rec-time').value = rec.time || '12:00';
+        const recTimeDisplay = document.getElementById('rec-time-display');
+        if (recTimeDisplay) recTimeDisplay.textContent = rec.time || '12:00';
+        document.getElementById('rec-proc-id').value = rec.procedureId;
+        document.getElementById('rec-qty').value = rec.quantity;
+        document.getElementById('rec-duration').value = rec.duration;
+        document.getElementById('rec-notes').value = rec.notes || '';
+
+        this.state.selectedTeeth.clear();
+        document.querySelectorAll('.tooth-btn.selected').forEach(b => b.classList.remove('selected'));
+        if (Array.isArray(rec.teeth)) {
+          rec.teeth.forEach(t => this.state.selectedTeeth.add(t));
+        }
+        document.querySelectorAll('.tooth-btn').forEach(btn => {
+          if (this.state.selectedTeeth.has(parseInt(btn.textContent, 10))) {
+            btn.classList.add('selected');
+          }
+        });
+        this.updateTeethDisplay();
+
+        document.getElementById('form-record-title').innerHTML = `
+          <svg style="width: 20px; height: 20px; fill: currentColor;" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+          Editar Registro de Atendimento
+        `;
+        document.getElementById('btn-save-record').textContent = 'Salvar Alteração';
+        this.recalcFormPreview();
+      },
+
+      cancelEditRecord() {
+        this.resetNewRecordForm();
+        this.navigate('dashboard');
+      },
+
+      async deleteRecord(recId) {
+        const rec = this.state.records.find(r => r.id === recId);
+        if (!rec) return;
+
+        const confirmMsg = `Tem certeza de que deseja excluir este registro?\n\nProcedimento: ${rec.procedureName}\nData: ${formatDateBR(rec.date)} ${rec.time}\nFaturamento: ${formatBRL(rec.totalRevenue)}`;
+        if (!confirm(confirmMsg)) return;
+
+        await DentalDB.delete('records', recId);
+        await this.loadDatabase();
+
+        this.toast('Registro excluído com sucesso.');
+        this.refreshAllIndicators();
+      },
+
+      // --- FILTROS E PRODUÇÃO ---
+      applyFilters() {
+        const start = document.getElementById('filter-date-start').value;
+        const end = document.getElementById('filter-date-end').value;
+        const procId = document.getElementById('filter-proc-id').value;
+        const tooth = document.getElementById('filter-tooth').value.trim();
+        const text = document.getElementById('filter-text').value.trim().toLowerCase();
+
+        this.state.activeFilters = { start, end, procId, tooth, text };
+        this.renderProductionList();
+      },
+
+      clearFilters() {
+        document.getElementById('filter-date-start').value = '';
+        const startDisplay = document.getElementById('filter-date-start-display');
+        if (startDisplay) startDisplay.textContent = 'DD/MM/AAAA';
+
+        document.getElementById('filter-date-end').value = '';
+        const endDisplay = document.getElementById('filter-date-end-display');
+        if (endDisplay) endDisplay.textContent = 'DD/MM/AAAA';
+
+        document.getElementById('filter-proc-id').value = '';
+        document.getElementById('filter-tooth').value = '';
+        document.getElementById('filter-text').value = '';
+        this.state.activeFilters = null;
+        this.renderProductionList();
+      },
+
+      getFilteredRecords() {
+        let list = [...this.state.records];
+        const f = this.state.activeFilters;
+        if (!f) return list.sort((a, b) => (b.date + b.time).localeCompare(a.date + a.time));
+
+        return list.filter(r => {
+          if (f.start && r.date < f.start) return false;
+          if (f.end && r.date > f.end) return false;
+          if (f.procId && r.procedureId !== f.procId) return false;
+          if (f.tooth && (!r.teeth || !r.teeth.includes(parseInt(f.tooth, 10)))) return false;
+          if (f.text && (!r.notes || !r.notes.toLowerCase().includes(f.text))) return false;
+          return true;
+        }).sort((a, b) => (b.date + b.time).localeCompare(a.date + a.time));
+      },
+
+      renderProductionList() {
+        const container = document.getElementById('records-container');
+        const list = this.getFilteredRecords();
+
+        let totalRev = 0;
+        list.forEach(r => totalRev += r.totalRevenue);
+
+        document.getElementById('prod-records-count').textContent = `${list.length} ${list.length === 1 ? 'registro encontrado' : 'registros encontrados'}`;
+        document.getElementById('prod-total-filtered-revenue').textContent = `Total: ${formatBRL(totalRev)}`;
+
+        if (list.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+              <h3>Nenhum registro encontrado</h3>
+              <p>Comece registrando seu primeiro atendimento odontológico.</p>
+              <button class="btn btn-sm btn-primary" onclick="App.navigate('new')" style="margin: 0 auto; width: auto;">NOVO REGISTRO</button>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = list.map(r => `
+          <div class="record-card">
+            <div class="record-header">
+              <div class="record-title">${r.procedureName}</div>
+              <div class="record-date-badge">${r.date.split('-').reverse().join('/')} ${r.time || ''}</div>
+            </div>
+            <div class="record-details">
+              <div><strong>Qtd:</strong> ${r.quantity} un (${r.duration} min)</div>
+              <div><strong>Faturamento:</strong> ${formatBRL(r.totalRevenue)}</div>
+              <div><strong>Unitário:</strong> ${formatBRL(r.unitPrice)}</div>
+              <div><strong>Rentabilidade:</strong> ${formatBRL(r.rentability)}/min</div>
+              ${r.teeth && r.teeth.length > 0 ? `<div style="grid-column: span 2;"><strong>Dentes FDI:</strong> ${r.teeth.join(', ')}</div>` : ''}
+              ${r.notes ? `<div style="grid-column: span 2; color: var(--text-muted); font-style: italic;">"${r.notes}"</div>` : ''}
+            </div>
+            <div class="record-actions">
+              <button class="btn btn-sm btn-secondary" onclick="App.editRecord('${r.id}')">Editar</button>
+              <button class="btn btn-sm btn-danger" onclick="App.deleteRecord('${r.id}')">Excluir</button>
+            </div>
+          </div>
+        `).join('');
+      },
+
+      // --- METRICAS, DASHBOARD EXECUTIVO & GRÁFICOS ---
+      refreshAllIndicators() {
+        const month = this.state.currentMonth;
+        const now = new Date();
+        const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+        // Atualiza cabeçalho e saudação do Dashboard
+        const currentHour = now.getHours();
+        let greeting = 'Bom dia, Doutor(a)';
+        if (currentHour >= 12 && currentHour < 18) greeting = 'Boa tarde, Doutor(a)';
+        else if (currentHour >= 18 || currentHour < 5) greeting = 'Boa noite, Doutor(a)';
+
+        const greetingEl = document.getElementById('dash-greeting-text');
+        if (greetingEl) greetingEl.textContent = greeting;
+
+        const profEl = document.getElementById('dash-prof-name');
+        if (profEl) profEl.textContent = this.state.settings.professionalName || 'Dr. Jovane Dantas';
+
+        const clinicEl = document.getElementById('dash-clinic-sub');
+        if (clinicEl) clinicEl.textContent = this.state.settings.clinicName || 'Dental Clínica Dr. Jovane Dantas';
+
+        const monthPill = document.getElementById('dash-active-month-text');
+        if (monthPill) monthPill.textContent = formatMonthBR(month);
+
+        let monthRev = 0;
+        let todayRev = 0;
+        let allTimeRev = 0;
+        let monthProcCount = 0;
+        let monthDuration = 0;
+        const monthDaysSet = new Set();
+        const monthRecords = [];
+
+        this.state.records.forEach(r => {
+          allTimeRev += (r.totalRevenue || 0);
+          if (r.date && r.date.startsWith(month)) {
+            monthRev += (r.totalRevenue || 0);
+            monthProcCount += (r.quantity || 0);
+            monthDuration += (r.duration || 0);
+            monthDaysSet.add(r.date);
+            monthRecords.push(r);
+          }
+          if (r.date === todayStr) {
+            todayRev += (r.totalRevenue || 0);
+          }
+        });
+
+        // Ordenar registros do mês do mais recente para o mais antigo
+        monthRecords.sort((a, b) => ((b.date || '') + (b.time || '')).localeCompare((a.date || '') + (a.time || '')));
+
+        const target = this.state.targets[month] || 0;
+        const pct = target > 0 ? Math.min(Math.round((monthRev / target) * 100), 999) : 0;
+        const remaining = Math.max(0, target - monthRev);
+
+        // Dias e projeções
+        const [y, m] = month.split('-').map(n => parseInt(n, 10));
+        const daysInMonth = new Date(y, m, 0).getDate();
+        const daysProduced = monthDaysSet.size;
+        let projection = 0;
+        let avgDaily = 0;
+        if (daysProduced > 0) {
+          avgDaily = monthRev / daysProduced;
+          projection = avgDaily * daysInMonth;
+        }
+
+        const avgTicket = monthProcCount > 0 ? monthRev / monthProcCount : 0;
+        const avgRentMin = monthDuration > 0 ? monthRev / monthDuration : 0;
+
+        // Atualização do VIP Card
+        const elMonthRev = document.getElementById('dash-month-revenue');
+        if (elMonthRev) elMonthRev.textContent = formatBRL(monthRev);
+
+        const elTodayRev = document.getElementById('dash-today-revenue');
+        if (elTodayRev) elTodayRev.textContent = `Hoje: ${formatBRL(todayRev)}`;
+
+        const elDailyAvg = document.getElementById('dash-daily-avg');
+        if (elDailyAvg) elDailyAvg.textContent = daysProduced > 0 ? `${formatBRL(avgDaily)}/dia` : 'R$ 0,00/dia';
+
+        const elProj = document.getElementById('dash-projection');
+        if (elProj) elProj.textContent = daysProduced > 0 ? formatBRL(projection) : 'R$ 0,00';
+
+        const elAllTime = document.getElementById('dash-alltime-revenue');
+        if (elAllTime) elAllTime.textContent = formatBRL(allTimeRev);
+
+        const elProdDays = document.getElementById('dash-prod-days');
+        if (elProdDays) elProdDays.textContent = `${daysProduced} ${daysProduced === 1 ? 'dia produzido' : 'dias produzidos'}`;
+
+        // Atualização do Grid de KPIs (4 Cards)
+        const elMonthTarget = document.getElementById('dash-month-target');
+        if (elMonthTarget) elMonthTarget.textContent = target > 0 ? formatBRL(target) : 'R$ 0,00';
+
+        const elTargetPct = document.getElementById('dash-target-percent');
+        if (elTargetPct) elTargetPct.textContent = target > 0 ? `${pct}%` : '0%';
+
+        const elTargetStatus = document.getElementById('dash-target-status');
+        if (elTargetStatus) {
+          elTargetStatus.textContent = target > 0 
+            ? (monthRev >= target ? '🎉 Meta Batida!' : `Atingimento: ${pct}%`) 
+            : 'Defina sua meta';
+        }
+
+        const elRentMin = document.getElementById('dash-avg-rent-min');
+        if (elRentMin) elRentMin.textContent = `${formatBRL(avgRentMin)}/min`;
+
+        const elRentHoursTag = document.getElementById('dash-rent-hours-tag');
+        if (elRentHoursTag) {
+          const h = Math.floor(monthDuration / 60);
+          const min = monthDuration % 60;
+          elRentHoursTag.textContent = h > 0 ? `${h}h ${min}m` : `${min} min`;
+        }
+
+        const elRentSub = document.getElementById('dash-rent-sub');
+        if (elRentSub) elRentSub.textContent = `${monthDuration} min clínico total`;
+
+        const elProcCount = document.getElementById('dash-proc-count');
+        if (elProcCount) elProcCount.textContent = monthProcCount;
+
+        const elProcCountTag = document.getElementById('dash-proc-count-tag');
+        if (elProcCountTag) elProcCountTag.textContent = `${monthProcCount} un`;
+
+        const elAvgTicket = document.getElementById('dash-avg-ticket');
+        if (elAvgTicket) elAvgTicket.textContent = `Ticket Médio: ${formatBRL(avgTicket)}`;
+
+        const elTargetRemaining = document.getElementById('dash-target-remaining');
+        if (elTargetRemaining) elTargetRemaining.textContent = target > 0 ? formatBRL(remaining) : 'R$ 0,00';
+
+        const elTargetDailyPace = document.getElementById('dash-target-daily-pace');
+        if (elTargetDailyPace) {
+          if (target === 0) {
+            elTargetDailyPace.textContent = 'Sem meta definida';
+          } else if (monthRev >= target) {
+            elTargetDailyPace.textContent = 'Objetivo superado! 🚀';
+          } else {
+            const currentDay = now.getMonth() + 1 === m && now.getFullYear() === y ? now.getDate() : 1;
+            const daysLeft = Math.max(1, daysInMonth - currentDay);
+            const paceNeeded = remaining / daysLeft;
+            elTargetDailyPace.textContent = `Ritmo: ${formatBRL(paceNeeded)}/dia restante`;
+          }
+        }
+
+        // Termômetro da Meta
+        const thermoFill = document.getElementById('dash-thermo-fill');
+        const thermoReal = document.getElementById('dash-thermo-realized');
+        const thermoPct = document.getElementById('dash-thermo-pct');
+        const thermoGoal = document.getElementById('dash-thermo-goal');
+        const thermoBadge = document.getElementById('dash-thermo-badge');
+        const thermoInsight = document.getElementById('dash-thermo-insight-box');
+
+        if (thermoReal) thermoReal.textContent = formatBRL(monthRev);
+        if (thermoPct) thermoPct.textContent = `${pct}%`;
+        if (thermoGoal) thermoGoal.textContent = target > 0 ? formatBRL(target) : 'R$ 0,00';
+        if (thermoFill) thermoFill.style.width = `${Math.min(pct, 100)}%`;
+
+        if (thermoBadge) {
+          if (target > 0 && monthRev >= target) {
+            thermoBadge.textContent = '🎉 Meta Atingida';
+            thermoBadge.className = 'dash-thermo-badge achieved';
+          } else {
+            thermoBadge.textContent = target > 0 ? `${pct}% Concluído` : 'Sem Meta';
+            thermoBadge.className = 'dash-thermo-badge';
+          }
+        }
+
+        if (thermoInsight) {
+          if (target === 0) {
+            thermoInsight.innerHTML = '💡 <strong>Dica Pro:</strong> Defina uma meta mensal para desbloquear projeções e ritmo diário automático.';
+          } else if (monthRev >= target) {
+            const surplus = monthRev - target;
+            thermoInsight.innerHTML = `🎉 <strong>Sensacional!</strong> Você bateu sua meta mensal com <strong>${formatBRL(surplus)}</strong> de superávit (${pct}% do objetivo)!`;
+          } else {
+            const currentDay = now.getMonth() + 1 === m && now.getFullYear() === y ? now.getDate() : 1;
+            const daysLeft = Math.max(1, daysInMonth - currentDay);
+            const dailyNeeded = remaining / daysLeft;
+            thermoInsight.innerHTML = `🎯 Faltam <strong>${formatBRL(remaining)}</strong> para atingir a meta. Ritmo necessário estimado: <strong>${formatBRL(dailyNeeded)}/dia</strong> nos próximos ${daysLeft} dias.`;
+          }
+        }
+
+        // Renderizar Feed de Últimos Atendimentos no Dashboard
+        const recentContainer = document.getElementById('dash-recent-records-container');
+        if (recentContainer) {
+          if (monthRecords.length === 0) {
+            recentContainer.innerHTML = `
+              <div style="text-align: center; padding: 16px 8px; color: var(--text-muted); font-size: 0.78rem;">
+                <p style="margin-bottom: 8px;">Nenhum atendimento registrado neste mês ainda.</p>
+                <button type="button" class="btn btn-sm btn-primary" onclick="App.navigate('new')" style="display: inline-flex; align-items: center; gap: 4px; padding: 6px 14px;">
+                  + Lançar Primeiro Atendimento
+                </button>
+              </div>
+            `;
+          } else {
+            const topRecent = monthRecords.slice(0, 4);
+            recentContainer.innerHTML = topRecent.map(r => `
+              <div class="dash-recent-item" onclick="App.editRecord('${r.id}')" style="cursor: pointer;" title="Toque para editar">
+                <div class="dash-recent-left">
+                  <div class="dash-recent-proc">${r.procedureName}</div>
+                  <div class="dash-recent-meta">
+                    📅 ${formatDateBR(r.date)} ${r.time ? '• ⏰ ' + r.time : ''} • ⏱️ ${r.duration || 0} min ${r.teeth && r.teeth.length > 0 ? '• 🦷 Dente ' + r.teeth.join(', ') : ''}
+                  </div>
+                </div>
+                <div class="dash-recent-right">
+                  <div class="dash-recent-val">${formatBRL(r.totalRevenue)}</div>
+                  <div class="dash-recent-rent">${formatBRL(r.rentability)}/min</div>
+                </div>
+              </div>
+            `).join('');
+          }
+        }
+
+        // Gráficos e tabelas
+        const chartMonthLabel = document.getElementById('dash-chart-month-label');
+        if (chartMonthLabel) chartMonthLabel.textContent = `${formatMonthBR(month)} (${daysInMonth} dias)`;
+
+        this.renderRevenueChart(month, daysInMonth);
+        this.renderProductionList();
+        this.renderRentability();
+        this.renderTargetsHistory();
+      },
+
+      renderRevenueChart(month, daysInMonth) {
+        const container = document.getElementById('svg-chart-revenue');
+        if (!container) return;
+
+        const dailyRev = {};
+        for (let d = 1; d <= daysInMonth; d++) {
+          const dStr = `${month}-${String(d).padStart(2, '0')}`;
+          dailyRev[dStr] = 0;
+        }
+
+        this.state.records.forEach(r => {
+          if (r.date && r.date.startsWith(month) && dailyRev[r.date] !== undefined) {
+            dailyRev[r.date] += (r.totalRevenue || 0);
+          }
+        });
+
+        const dates = Object.keys(dailyRev);
+        const values = Object.values(dailyRev);
+        const maxVal = Math.max(...values, 100);
+
+        const width = 500;
+        const height = 120;
+        const padding = 20;
+
+        const points = dates.map((d, i) => {
+          const x = padding + (i / (dates.length - 1)) * (width - 2 * padding);
+          const y = height - padding - (values[i] / maxVal) * (height - 2 * padding);
+          return `${x},${y}`;
+        }).join(' ');
+
+        const areaPoints = `${padding},${height - padding} ${points} ${width - padding},${height - padding}`;
+
+        container.innerHTML = `
+          <svg viewBox="0 0 ${width} ${height}" style="width: 100%; height: 100%; overflow: visible;">
+            <defs>
+              <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#A61C41" stop-opacity="0.45" />
+                <stop offset="100%" stop-color="#A61C41" stop-opacity="0.0" />
+              </linearGradient>
+            </defs>
+            <line x1="${padding}" y1="${height - padding}" x2="${width - padding}" y2="${height - padding}" stroke="#E0E0E0" stroke-width="1" />
+            <polygon points="${areaPoints}" fill="url(#chartGrad)" />
+            <polyline points="${points}" fill="none" stroke="#A61C41" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+            ${values.map((v, i) => {
+              if (v > 0) {
+                const x = padding + (i / (dates.length - 1)) * (width - 2 * padding);
+                const y = height - padding - (v / maxVal) * (height - 2 * padding);
+                return `<circle cx="${x}" cy="${y}" r="3.5" fill="#D9305D" stroke="#FFF" stroke-width="1.5" />`;
+              }
+              return '';
+            }).join('')}
+          </svg>
+        `;
+      },
+
+      // --- RENTABILIDADE CONSOLIDADA ---
+      setRentabilityPeriod(p) {
+        this.state.rentabilityPeriod = p;
+        document.getElementById('btn-rent-month').className = p === 'month' ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-secondary';
+        document.getElementById('btn-rent-all').className = p === 'all' ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-secondary';
+        this.renderRentability();
+      },
+
+      renderRentability() {
+        const isMonth = this.state.rentabilityPeriod === 'month';
+        const currentM = this.state.currentMonth;
+
+        const relevantRecords = this.state.records.filter(r => isMonth ? r.date.startsWith(currentM) : true);
+
+        // Agrupamento consolidado por procedimento
+        const map = {};
+        relevantRecords.forEach(r => {
+          if (!map[r.procedureName]) {
+            map[r.procedureName] = { name: r.procedureName, totalRev: 0, totalMin: 0, totalQty: 0 };
+          }
+          map[r.procedureName].totalRev += r.totalRevenue;
+          map[r.procedureName].totalMin += r.duration;
+          map[r.procedureName].totalQty += r.quantity;
+        });
+
+        const list = Object.values(map).map(item => ({
+          ...item,
+          rentability: item.totalMin > 0 ? item.totalRev / item.totalMin : 0
+        })).sort((a, b) => b.rentability - a.rentability);
+
+        const top3 = list.slice(0, 3);
+        const topContainer = document.getElementById('top-rentability-list');
+        const allContainer = document.getElementById('all-rentability-list');
+
+        if (top3.length === 0) {
+          topContainer.innerHTML = '<p style="font-size: 0.82rem; color: var(--text-muted); text-align: center; padding: 12px;">Sem dados de atendimento para o período selecionado.</p>';
+          allContainer.innerHTML = '';
+          return;
+        }
+
+        topContainer.innerHTML = top3.map((item, idx) => `
+          <div class="ranking-card">
+            <div class="ranking-pos pos-${idx + 1}">${idx + 1}º</div>
+            <div class="ranking-info">
+              <div class="ranking-title">${item.name}</div>
+              <div class="ranking-stats">
+                <span><strong>Qtd:</strong> ${item.totalQty}</span>
+                <span><strong>Faturamento:</strong> ${formatBRL(item.totalRev)}</span>
+                <span><strong>Tempo Total:</strong> ${item.totalMin} min</span>
+              </div>
+            </div>
+            <div class="ranking-rentability">
+              ${formatBRL(item.rentability)}
+              <small>/minuto</small>
+            </div>
+          </div>
+        `).join('');
+
+        allContainer.innerHTML = list.map((item, idx) => `
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #EEE; font-size: 0.8rem;">
+            <div>
+              <strong>${idx + 1}. ${item.name}</strong>
+              <div style="font-size: 0.72rem; color: var(--text-muted);">
+                ${item.totalQty} realizados | ${item.totalMin} min totais
+              </div>
+            </div>
+            <div style="text-align: right; font-weight: 800; color: var(--primary);">
+              ${formatBRL(item.rentability)}/min
+            </div>
+          </div>
+        `).join('');
+      },
+
+      // --- METAS ---
+      async saveTarget(e) {
+        e.preventDefault();
+        const month = document.getElementById('target-month-input').value;
+        const val = parseFloat(document.getElementById('target-value-input').value) || 0;
+
+        if (!month || val <= 0) {
+          this.toast('Informe um mês e um valor de meta válido.');
+          return;
+        }
+
+        await DentalDB.put('targets', { month, value: val });
+        await this.loadDatabase();
+
+        this.toast('Meta cadastrada com sucesso!', 'success');
+        this.refreshAllIndicators();
+      },
+
+      renderTargetsHistory() {
+        const container = document.getElementById('targets-history-list');
+        const months = Object.keys(this.state.targets).sort().reverse();
+
+        if (months.length === 0) {
+          container.innerHTML = '<p style="font-size: 0.8rem; color: var(--text-muted);">Nenhuma meta histórica cadastrada.</p>';
+          return;
+        }
+
+        container.innerHTML = months.map(m => `
+          <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #EEE; font-size: 0.85rem;">
+            <span><strong>${formatMonthBR(m)}</strong> <span style="font-size: 0.72rem; color: var(--text-muted);">(${m})</span></span>
+            <span style="color: var(--primary); font-weight: 700;">${formatBRL(this.state.targets[m])}</span>
+          </div>
+        `).join('');
+      },
+
+      // --- ADMINISTRAÇÃO E SEGURANÇA ---
+      async handleAdminAuth(e) {
+        e.preventDefault();
+        const pw = document.getElementById('admin-password-input').value;
+
+        if (!this.state.settings.adminPasswordHash) {
+          // Criação da primeira senha
+          const confirmPw = document.getElementById('admin-password-confirm').value;
+          if (pw.length < 4) {
+            this.toast('A senha deve ter no mínimo 4 caracteres.');
+            return;
+          }
+          if (pw !== confirmPw) {
+            this.toast('As senhas não coincidem.');
+            return;
+          }
+
+          const hash = await hashPassword(pw);
+          this.state.settings.adminPasswordHash = hash;
+          await DentalDB.put('settings', { key: 'adminPasswordHash', value: hash });
+
+          this.state.isAdminAuthenticated = true;
+          this.toast('Senha administrativa criada com sucesso!', 'success');
+          this.unlockAdminPanel();
+        } else {
+          // Verificação da senha existente
+          const hash = await hashPassword(pw);
+          if (hash === this.state.settings.adminPasswordHash) {
+            this.state.isAdminAuthenticated = true;
+            this.unlockAdminPanel();
+          } else {
+            this.toast('Senha incorreta.');
+          }
+        }
+      },
+
+      unlockAdminPanel() {
+        document.getElementById('admin-auth-card').style.display = 'none';
+        document.getElementById('admin-content-panel').style.display = 'block';
+
+        document.getElementById('setting-clinic-name').value = this.state.settings.clinicName;
+        document.getElementById('setting-prof-name').value = this.state.settings.professionalName;
+
+        this.renderAdminProceduresList();
+      },
+
+      renderAdminProceduresList() {
+        const container = document.getElementById('admin-procedures-list');
+        container.innerHTML = this.state.procedures.map(p => `
+          <div style="background: #F9F9F9; border: 1px solid #E5E5E5; border-radius: var(--radius-sm); padding: 10px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div style="font-weight: 700; font-size: 0.85rem; color: ${p.active ? 'var(--text-main)' : '#999'};">
+                ${p.name} ${!p.active ? '(Inativo)' : ''}
+              </div>
+              <div style="font-size: 0.75rem; color: var(--primary); font-weight: 700;">
+                ${formatBRL(p.price)} • ${p.needsTeeth !== false ? 'Com Odontograma' : 'Sem dente'}
+              </div>
+            </div>
+            <div style="display: flex; gap: 6px;">
+              <button class="btn btn-sm btn-secondary" onclick="App.openEditProcedureModal('${p.id}')">Editar</button>
+              <button class="btn btn-sm ${p.active ? 'btn-danger' : 'btn-primary'}" onclick="App.toggleProcedureActive('${p.id}')">
+                ${p.active ? 'Desativar' : 'Reativar'}
+              </button>
+            </div>
+          </div>
+        `).join('');
+      },
+
+      openNewProcedureModal() {
+        document.getElementById('proc-modal-id').value = '';
+        document.getElementById('proc-modal-name').value = '';
+        document.getElementById('proc-modal-price').value = '';
+        document.getElementById('proc-modal-need-teeth').value = 'true';
+        document.getElementById('proc-modal-active').value = 'true';
+        document.getElementById('modal-proc-title').textContent = 'Novo Procedimento';
+        document.getElementById('modal-proc').classList.add('show');
+      },
+
+      openEditProcedureModal(id) {
+        const proc = this.state.procedures.find(p => p.id === id);
+        if (!proc) return;
+
+        document.getElementById('proc-modal-id').value = proc.id;
+        document.getElementById('proc-modal-name').value = proc.name;
+        document.getElementById('proc-modal-price').value = proc.price;
+        document.getElementById('proc-modal-need-teeth').value = proc.needsTeeth !== false ? 'true' : 'false';
+        document.getElementById('proc-modal-active').value = proc.active ? 'true' : 'false';
+        document.getElementById('modal-proc-title').textContent = 'Editar Procedimento';
+        document.getElementById('modal-proc').classList.add('show');
+      },
+
+      async saveProcedureModal(e) {
+        e.preventDefault();
+        const id = document.getElementById('proc-modal-id').value || `p_${Date.now()}`;
+        const name = document.getElementById('proc-modal-name').value.trim();
+        const price = parseFloat(document.getElementById('proc-modal-price').value) || 0;
+        const needsTeeth = document.getElementById('proc-modal-need-teeth').value === 'true';
+        const active = document.getElementById('proc-modal-active').value === 'true';
+
+        const proc = { id, name, price, needsTeeth, active };
+        await DentalDB.put('procedures', proc);
+        await this.loadDatabase();
+
+        this.closeModal('modal-proc');
+        this.updateProcedureSelects();
+        this.renderAdminProceduresList();
+        this.toast('Procedimento salvo com sucesso!', 'success');
+      },
+
+      async toggleProcedureActive(id) {
+        const proc = this.state.procedures.find(p => p.id === id);
+        if (!proc) return;
+
+        proc.active = !proc.active;
+        await DentalDB.put('procedures', proc);
+        await this.loadDatabase();
+
+        this.updateProcedureSelects();
+        this.renderAdminProceduresList();
+        this.toast(proc.active ? 'Procedimento reativado.' : 'Procedimento desativado.');
+      },
+
+      async saveSettings(e) {
+        e.preventDefault();
+        const clinic = document.getElementById('setting-clinic-name').value.trim();
+        const prof = document.getElementById('setting-prof-name').value.trim();
+
+        this.state.settings.clinicName = clinic;
+        this.state.settings.professionalName = prof;
+
+        await DentalDB.put('settings', { key: 'clinicName', value: clinic });
+        await DentalDB.put('settings', { key: 'professionalName', value: prof });
+
+        this.updateHeaderAndBranding();
+        this.toast('Configurações salvas!', 'success');
+      },
+
+      // --- BACKUP & RESTORE LOCAL ---
+      async exportBackup() {
+        const backupData = {
+          version: '1.0',
+          app: 'DentalPro',
+          exportDate: new Date().toISOString(),
+          settings: await DentalDB.getAll('settings'),
+          procedures: await DentalDB.getAll('procedures'),
+          targets: await DentalDB.getAll('targets'),
+          records: await DentalDB.getAll('records')
+        };
+
+        const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `DentalPro_Backup_${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        this.toast('Backup JSON exportado com sucesso.', 'success');
+      },
+
+      async importBackup(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        if (!confirm('Deseja realmente restaurar este backup? Todos os dados atuais serão substituídos com total segurança.')) {
+          e.target.value = '';
+          return;
+        }
+
+        try {
+          const text = await file.text();
+          const data = JSON.parse(text);
+
+          if (!data.procedures || !data.records) {
+            throw new Error('Arquivo de backup inválido.');
+          }
+
+          await DentalDB.clearAll();
+
+          if (Array.isArray(data.settings)) for (const s of data.settings) await DentalDB.put('settings', s);
+          if (Array.isArray(data.procedures)) for (const p of data.procedures) await DentalDB.put('procedures', p);
+          if (Array.isArray(data.targets)) for (const t of data.targets) await DentalDB.put('targets', t);
+          if (Array.isArray(data.records)) for (const r of data.records) await DentalDB.put('records', r);
+
+          await this.init();
+          this.toast('Backup restaurado com sucesso!', 'success');
+        } catch (err) {
+          alert('Erro ao restaurar backup: ' + err.message);
+        } finally {
+          e.target.value = '';
+        }
+      },
+
+      // --- RELATÓRIO / IMPRESSÃO / PDF NATIVO ---
+      extractScope: 'month', // 'month' | 'filtered' | 'all'
+
+      openMoreMenu() {
+        const monthLabel = document.getElementById('menu-current-month-label');
+        if (monthLabel) monthLabel.textContent = formatMonthBR(this.state.currentMonth);
+        document.getElementById('modal-more').classList.add('show');
+      },
+
+      openExtractModal() {
+        const currentMonthRecs = this.state.records.filter(r => r.date && r.date.startsWith(this.state.currentMonth));
+        const filteredRecs = this.getFilteredRecords();
+        const allRecs = this.state.records;
+
+        const sumMonthRev = currentMonthRecs.reduce((acc, r) => acc + (r.totalRevenue || 0), 0);
+        const sumFiltRev = filteredRecs.reduce((acc, r) => acc + (r.totalRevenue || 0), 0);
+        const sumAllRev = allRecs.reduce((acc, r) => acc + (r.totalRevenue || 0), 0);
+
+        const lblMonth = document.getElementById('extract-label-month');
+        if (lblMonth) lblMonth.textContent = `Mês Atual (${formatMonthBR(this.state.currentMonth)})`;
+
+        const statsMonth = document.getElementById('extract-stats-month');
+        if (statsMonth) statsMonth.textContent = `${currentMonthRecs.length} atendimento(s) • ${formatBRL(sumMonthRev)}`;
+
+        const statsFilt = document.getElementById('extract-stats-filtered');
+        if (statsFilt) statsFilt.textContent = `${filteredRecs.length} atendimento(s) • ${formatBRL(sumFiltRev)}`;
+
+        const statsAll = document.getElementById('extract-stats-all');
+        if (statsAll) statsAll.textContent = `${allRecs.length} atendimento(s) • ${formatBRL(sumAllRev)}`;
+
+        this.setExtractScope(this.extractScope || 'month');
+        document.getElementById('modal-extract').classList.add('show');
+      },
+
+      setExtractScope(scope) {
+        this.extractScope = scope;
+
+        ['month', 'filtered', 'all'].forEach(s => {
+          const card = document.getElementById(`extract-card-${s}`);
+          if (card) {
+            if (s === scope) card.classList.add('selected');
+            else card.classList.remove('selected');
+          }
+        });
+
+        const records = this.getExtractRecords();
+        let totalRev = 0;
+        let totalMin = 0;
+        let totalQty = 0;
+
+        records.forEach(r => {
+          totalRev += (r.totalRevenue || 0);
+          totalMin += (r.duration || 0);
+          totalQty += (r.quantity || 0);
+        });
+
+        const avgRent = totalMin > 0 ? totalRev / totalMin : 0;
+
+        const sumQty = document.getElementById('extract-sum-qty');
+        const sumRev = document.getElementById('extract-sum-rev');
+        const sumRent = document.getElementById('extract-sum-rent');
+
+        if (sumQty) sumQty.textContent = `${records.length}`;
+        if (sumRev) sumRev.textContent = formatBRL(totalRev);
+        if (sumRent) sumRent.textContent = `${formatBRL(avgRent)}/min`;
+      },
+
+      getExtractRecords() {
+        if (this.extractScope === 'filtered') {
+          return this.getFilteredRecords();
+        } else if (this.extractScope === 'all') {
+          return [...this.state.records].sort((a, b) => (b.date + (b.time || '')).localeCompare(a.date + (a.time || '')));
+        } else {
+          return this.state.records
+            .filter(r => r.date && r.date.startsWith(this.state.currentMonth))
+            .sort((a, b) => (b.date + (b.time || '')).localeCompare(a.date + (a.time || '')));
+        }
+      },
+
+      executePrintExtract() {
+        const recordsToPrint = this.getExtractRecords();
+
+        if (recordsToPrint.length === 0) {
+          alert('Não há atendimentos para o período ou escopo selecionado.');
+          return;
+        }
+
+        let totalRev = 0;
+        let totalMin = 0;
+        let totalQty = 0;
+
+        recordsToPrint.forEach(r => {
+          totalRev += (r.totalRevenue || 0);
+          totalMin += (r.duration || 0);
+          totalQty += (r.quantity || 0);
+        });
+
+        const avgRent = totalMin > 0 ? totalRev / totalMin : 0;
+        const scopeDesc = this.extractScope === 'month' 
+          ? `Mês: ${formatMonthBR(this.state.currentMonth)}`
+          : (this.extractScope === 'filtered' ? 'Registros Filtrados' : 'Histórico Geral Completo');
+
+        const printDiv = document.getElementById('print-area');
+        printDiv.innerHTML = `
+          <div style="font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif; padding: 24px; color: #111; max-width: 800px; margin: 0 auto; background: #FFF;">
+            <div style="border-bottom: 3px solid #A61C41; padding-bottom: 14px; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: flex-end;">
+              <div>
+                <h1 style="color: #A61C41; margin: 0; font-size: 1.5rem; font-weight: 800; letter-spacing: 0.5px;">DentalPro</h1>
+                <div style="font-size: 1.05rem; font-weight: 700; color: #222; margin-top: 4px;">${this.state.settings.clinicName}</div>
+                <div style="font-size: 0.85rem; color: #555;">Cirurgião-Dentista: <strong>${this.state.settings.professionalName}</strong></div>
+              </div>
+              <div style="text-align: right; font-size: 0.8rem; color: #555;">
+                <div style="font-weight: 700; color: #A61C41; font-size: 0.9rem;">EXTRATO DE PRODUÇÃO</div>
+                <div>${scopeDesc}</div>
+                <div style="margin-top: 4px; font-size: 0.75rem; color: #777;">Emitido em: ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}</div>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; background: #F8F9FA; border: 1.5px solid #E2E8F0; border-radius: 8px; padding: 12px; margin-bottom: 20px; font-size: 0.85rem;">
+              <div style="border-left: 3px solid #A61C41; padding-left: 8px;">
+                <div style="font-size: 0.7rem; color: #666; text-transform: uppercase;">Atendimentos</div>
+                <div style="font-size: 1.1rem; font-weight: 800; color: #111;">${recordsToPrint.length}</div>
+              </div>
+              <div style="border-left: 3px solid #A61C41; padding-left: 8px;">
+                <div style="font-size: 0.7rem; color: #666; text-transform: uppercase;">Faturamento Total</div>
+                <div style="font-size: 1.1rem; font-weight: 800; color: #A61C41;">${formatBRL(totalRev)}</div>
+              </div>
+              <div style="border-left: 3px solid #666; padding-left: 8px;">
+                <div style="font-size: 0.7rem; color: #666; text-transform: uppercase;">Tempo Total</div>
+                <div style="font-size: 1.1rem; font-weight: 800; color: #111;">${totalMin} min</div>
+              </div>
+              <div style="border-left: 3px solid #2E7D32; padding-left: 8px;">
+                <div style="font-size: 0.7rem; color: #666; text-transform: uppercase;">Rentabilidade/Min</div>
+                <div style="font-size: 1.1rem; font-weight: 800; color: #2E7D32;">${formatBRL(avgRent)}/min</div>
+              </div>
+            </div>
+
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-bottom: 24px;">
+              <thead>
+                <tr style="background: #A61C41; color: #FFF; text-align: left;">
+                  <th style="border: 1px solid #CBD5E1; padding: 8px 6px;">Data & Hora</th>
+                  <th style="border: 1px solid #CBD5E1; padding: 8px 6px;">Procedimento Realizado</th>
+                  <th style="border: 1px solid #CBD5E1; padding: 8px 6px; text-align: center;">Qtd</th>
+                  <th style="border: 1px solid #CBD5E1; padding: 8px 6px; text-align: center;">Dentes</th>
+                  <th style="border: 1px solid #CBD5E1; padding: 8px 6px; text-align: right;">Unitário</th>
+                  <th style="border: 1px solid #CBD5E1; padding: 8px 6px; text-align: right;">Total R$</th>
+                  <th style="border: 1px solid #CBD5E1; padding: 8px 6px; text-align: right;">R$/min</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${recordsToPrint.map((r, idx) => `
+                  <tr style="background: ${idx % 2 === 0 ? '#FFFFFF' : '#F8FAFC'};">
+                    <td style="border: 1px solid #E2E8F0; padding: 7px 6px; white-space: nowrap;">${formatDateBR(r.date)} ${r.time ? 'às ' + r.time : ''}</td>
+                    <td style="border: 1px solid #E2E8F0; padding: 7px 6px; font-weight: 600;">${r.procedureName} ${r.notes ? `<div style="font-size: 0.72rem; color: #666; font-style: italic;">Obs: ${r.notes}</div>` : ''}</td>
+                    <td style="border: 1px solid #E2E8F0; padding: 7px 6px; text-align: center;">${r.quantity}</td>
+                    <td style="border: 1px solid #E2E8F0; padding: 7px 6px; text-align: center;">${r.teeth && r.teeth.length > 0 ? r.teeth.join(', ') : '-'}</td>
+                    <td style="border: 1px solid #E2E8F0; padding: 7px 6px; text-align: right;">${formatBRL(r.unitPrice)}</td>
+                    <td style="border: 1px solid #E2E8F0; padding: 7px 6px; text-align: right; font-weight: bold; color: #A61C41;">${formatBRL(r.totalRevenue)}</td>
+                    <td style="border: 1px solid #E2E8F0; padding: 7px 6px; text-align: right; color: #2E7D32;">${formatBRL(r.rentability)}/min</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+
+            <div style="display: flex; justify-content: space-between; border-top: 1px dashed #CBD5E1; padding-top: 12px; font-size: 0.75rem; color: #777;">
+              <div>DentalPro — Sistema Odontológico de Alta Performance</div>
+              <div>${this.state.settings.clinicName}</div>
+            </div>
+          </div>
+        `;
+
+        this.closeModal('modal-extract');
+        this.closeModal('modal-extract-preview');
+
+        // Cria o elemento temporário na tela para captura
+        const tempContainer = document.createElement('div');
+        tempContainer.style.position = 'absolute';
+        tempContainer.style.left = '-9999px';
+        tempContainer.style.top = '0';
+        tempContainer.style.width = '800px';
+        tempContainer.innerHTML = printDiv.innerHTML;
+        document.body.appendChild(tempContainer);
+
+        const filename = `Extrato_${this.state.settings.clinicName.replace(/[^a-zA-Z0-9]/g, '_')}_${new Date().toISOString().slice(0,10)}.pdf`;
+
+        const opt = {
+          margin:       0.4,
+          filename:     filename,
+          image:        { type: 'jpeg', quality: 0.98 },
+          html2canvas:  { scale: 2, useCORS: true },
+          jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+        };
+
+        this.toast('Gerando PDF... Aguarde um instante', 'success');
+        
+        if (typeof html2pdf !== 'undefined') {
+          html2pdf().set(opt).from(tempContainer).outputPdf('datauristring').then((pdfBase64) => {
+            document.body.removeChild(tempContainer);
+            if (window.DentalNative && typeof window.DentalNative.savePdfBase64 === 'function') {
+              window.DentalNative.savePdfBase64(pdfBase64, filename);
+              this.toast('PDF processado! Enviado para Downloads.', 'success');
+            } else {
+              // Fallback para Web browser (desktop)
+              const link = document.createElement('a');
+              link.href = pdfBase64;
+              link.download = filename;
+              link.click();
+              this.toast('PDF baixado com sucesso!', 'success');
+            }
+          }).catch(err => {
+            console.error(err);
+            document.body.removeChild(tempContainer);
+            
+            // Fallback nativo
+            if (window.DentalNative && typeof window.DentalNative.printDocument === 'function') {
+              window.DentalNative.printDocument(`Extrato_${this.state.settings.clinicName.replace(/[^a-zA-Z0-9]/g, '_')}`);
+            } else {
+              window.print();
+            }
+          });
+        } else {
+          document.body.removeChild(tempContainer);
+          if (window.DentalNative && typeof window.DentalNative.printDocument === 'function') {
+            window.DentalNative.printDocument(`Extrato_${this.state.settings.clinicName.replace(/[^a-zA-Z0-9]/g, '_')}`);
+          } else {
+            window.print();
+          }
+        }
+      },
+
+      executeExportCsv() {
+        const records = this.getExtractRecords();
+        if (records.length === 0) {
+          alert('Não há registros para exportar no período selecionado.');
+          return;
+        }
+
+        const headers = ['Data', 'Hora', 'Procedimento', 'Quantidade', 'Duracao_Minutos', 'Dentes_FDI', 'Valor_Unitario_BRL', 'Faturamento_Total_BRL', 'Rentabilidade_Minuto_BRL', 'Observacoes'];
+        const rows = records.map(r => [
+          formatDateBR(r.date),
+          r.time || '12:00',
+          `"${(r.procedureName || '').replace(/"/g, '""')}"`,
+          r.quantity || 1,
+          r.duration || 0,
+          `"${(r.teeth || []).join(';')}"`,
+          (r.unitPrice || 0).toFixed(2).replace('.', ','),
+          (r.totalRevenue || 0).toFixed(2).replace('.', ','),
+          (r.rentability || 0).toFixed(2).replace('.', ','),
+          `"${(r.notes || '').replace(/"/g, '""')}"`
+        ]);
+
+        const csvContent = '\uFEFF' + [headers.join(';'), ...rows.map(e => e.join(';'))].join('\r\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const scopeFile = this.extractScope === 'month' ? this.state.currentMonth : (this.extractScope === 'filtered' ? 'Filtrado' : 'Completo');
+        a.download = `Extrato_Producao_DentalPro_${scopeFile}_${new Date().toISOString().slice(0,10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+
+        this.toast('Planilha CSV gerada e exportada!', 'success');
+      },
+
+      executePreviewExtract() {
+        const records = this.getExtractRecords();
+        const container = document.getElementById('extract-preview-container');
+        const title = document.getElementById('preview-extract-title');
+        
+        if (title) {
+          title.textContent = this.extractScope === 'month' 
+            ? `Extrato de ${formatMonthBR(this.state.currentMonth)}` 
+            : (this.extractScope === 'filtered' ? 'Extrato Filtrado' : 'Extrato Geral Completo');
+        }
+
+        if (records.length === 0) {
+          container.innerHTML = `
+            <div style="text-align: center; padding: 24px; color: var(--text-muted);">
+              <p>Nenhum atendimento encontrado para este escopo.</p>
+            </div>
+          `;
+        } else {
+          let totalRev = 0;
+          let totalQty = 0;
+          records.forEach(r => {
+            totalRev += (r.totalRevenue || 0);
+            totalQty += (r.quantity || 0);
+          });
+
+          container.innerHTML = `
+            <div style="background: #FAFAFA; border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 10px; margin-bottom: 12px; font-size: 0.8rem; display: flex; justify-content: space-between;">
+              <span><strong>${records.length}</strong> atendimentos</span>
+              <span>Total: <strong style="color: var(--primary);">${formatBRL(totalRev)}</strong></span>
+            </div>
+            <div style="overflow-x: auto;">
+              <table style="width: 100%; border-collapse: collapse; font-size: 0.78rem;">
+                <thead>
+                  <tr style="background: #F2F2F2; text-align: left;">
+                    <th style="padding: 6px; border: 1px solid var(--border-color);">Data</th>
+                    <th style="padding: 6px; border: 1px solid var(--border-color);">Procedimento</th>
+                    <th style="padding: 6px; border: 1px solid var(--border-color); text-align: center;">Qtd</th>
+                    <th style="padding: 6px; border: 1px solid var(--border-color); text-align: right;">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${records.map(r => `
+                    <tr>
+                      <td style="padding: 6px; border: 1px solid var(--border-color); white-space: nowrap;">${formatDateBR(r.date)}</td>
+                      <td style="padding: 6px; border: 1px solid var(--border-color); font-weight: 600;">${r.procedureName}</td>
+                      <td style="padding: 6px; border: 1px solid var(--border-color); text-align: center;">${r.quantity}</td>
+                      <td style="padding: 6px; border: 1px solid var(--border-color); text-align: right; font-weight: bold; color: var(--primary);">${formatBRL(r.totalRevenue)}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          `;
+        }
+
+        this.closeModal('modal-extract');
+        document.getElementById('modal-extract-preview').classList.add('show');
+      },
+
+      // --- NAVEGAÇÃO & UI ---
+      navigate(viewId) {
+        document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+        const targetView = document.getElementById(`view-${viewId}`);
+        if (targetView) targetView.classList.add('active');
+
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        const activeNav = document.getElementById(`nav-btn-${viewId}`);
+        if (activeNav) activeNav.classList.add('active');
+
+        if (viewId === 'dashboard') this.refreshAllIndicators();
+        if (viewId === 'production') this.renderProductionList();
+        if (viewId === 'rentability') this.renderRentability();
+        if (viewId === 'target') {
+          document.getElementById('target-month-input').value = this.state.currentMonth;
+          const targetDisplay = document.getElementById('target-month-input-display');
+          if (targetDisplay) targetDisplay.textContent = formatMonthBR(this.state.currentMonth);
+          this.renderTargetsHistory();
+        }
+        if (viewId === 'admin' && !this.state.isAdminAuthenticated) {
+          const isFirstTime = !this.state.settings.adminPasswordHash;
+          document.getElementById('admin-confirm-pw-group').style.display = isFirstTime ? 'block' : 'none';
+          document.getElementById('admin-auth-desc').textContent = isFirstTime
+            ? 'Crie sua senha de acesso administrativo para configurar o sistema com segurança.'
+            : 'Digite sua senha administrativa para acessar as configurações.';
+          document.getElementById('btn-admin-login').textContent = isFirstTime ? 'Criar Senha e Entrar' : 'Entrar';
+        }
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      },
+
+      openMonthSelector() {
+        DentalDatePicker.openMonthQuickSelect();
+      },
+
+      closeModal(modalId) {
+        const m = document.getElementById(modalId);
+        if (m) m.classList.remove('show');
+      },
+
+      toast(msg, type = '') {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.className = `toast-msg show ${type}`;
+        setTimeout(() => { t.className = 'toast-msg'; }, 3000);
+      }
+    };
+
+    // Inicialização ao carregar
+    window.addEventListener('DOMContentLoaded', () => {
+      App.init();
+    });
+  </script>
+</body>
+</html>

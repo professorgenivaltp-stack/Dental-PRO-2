@@ -1,0 +1,6 @@
+{
+  "name": "DentalPro",
+  "description": "Sistema Mobile de Registro e Gestão da Produção Odontológica para Dental Clínica Dr. Jovane Dantas",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
