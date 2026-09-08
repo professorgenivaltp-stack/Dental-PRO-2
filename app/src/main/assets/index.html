@@ -2497,20 +2497,27 @@
     class DentalDB {
       static open() {
         return new Promise((resolve, reject) => {
-          const req = indexedDB.open(DB_NAME, DB_VERSION);
-          req.onupgradeneeded = (e) => {
-            const db = e.target.result;
-            if (!db.objectStoreNames.contains('settings')) db.createObjectStore('settings', { keyPath: 'key' });
-            if (!db.objectStoreNames.contains('procedures')) db.createObjectStore('procedures', { keyPath: 'id' });
-            if (!db.objectStoreNames.contains('targets')) db.createObjectStore('targets', { keyPath: 'month' });
-            if (!db.objectStoreNames.contains('records')) {
-              const recStore = db.createObjectStore('records', { keyPath: 'id' });
-              recStore.createIndex('date', 'date', { unique: false });
-              recStore.createIndex('professionalId', 'professionalId', { unique: false });
+          try {
+            if (typeof indexedDB === 'undefined' || indexedDB === null) {
+               return reject(new Error('IndexedDB não suportado neste navegador.'));
             }
-          };
-          req.onsuccess = () => resolve(req.result);
-          req.onerror = () => reject(req.error);
+            const req = indexedDB.open(DB_NAME, DB_VERSION);
+            req.onupgradeneeded = (e) => {
+              const db = e.target.result;
+              if (!db.objectStoreNames.contains('settings')) db.createObjectStore('settings', { keyPath: 'key' });
+              if (!db.objectStoreNames.contains('procedures')) db.createObjectStore('procedures', { keyPath: 'id' });
+              if (!db.objectStoreNames.contains('targets')) db.createObjectStore('targets', { keyPath: 'month' });
+              if (!db.objectStoreNames.contains('records')) {
+                const recStore = db.createObjectStore('records', { keyPath: 'id' });
+                recStore.createIndex('date', 'date', { unique: false });
+                recStore.createIndex('professionalId', 'professionalId', { unique: false });
+              }
+            };
+            req.onsuccess = () => resolve(req.result);
+            req.onerror = () => reject(req.error);
+          } catch (err) {
+            reject(err);
+          }
         });
       }
 
@@ -3088,6 +3095,7 @@
       },
 
       async init() {
+        let isMemoryMode = false;
         try {
           // Data do dia e mês inicial
           const now = new Date();
@@ -3100,27 +3108,48 @@
           this.buildOdontogramUI();
 
           // Carrega dados do IndexedDB
-          await this.loadDatabase();
-
-          // Se for primeira vez, inicializa procedimentos e configurações
-          if (this.state.procedures.length === 0) {
-            for (const p of INITIAL_PROCEDURES) {
-              await DentalDB.put('procedures', p);
+          try {
+            await this.loadDatabase();
+          } catch (dbErr) {
+            if (dbErr.message === 'MODO_MEMORIA') {
+              isMemoryMode = true;
+            } else {
+              throw dbErr;
             }
-            this.state.procedures = await DentalDB.getAll('procedures');
           }
 
-          // Verifica senha do admin
-          const pwObj = await DentalDB.get('settings', 'adminPasswordHash');
-          if (pwObj) {
-            this.state.settings.adminPasswordHash = pwObj.value;
+          if (!isMemoryMode) {
+            try {
+              // Se for primeira vez, inicializa procedimentos e configurações
+              if (!Array.isArray(this.state.procedures) || this.state.procedures.length === 0) {
+                for (const p of INITIAL_PROCEDURES) {
+                  await DentalDB.put('procedures', p);
+                }
+                this.state.procedures = await DentalDB.getAll('procedures');
+              }
+
+              // Verifica senha do admin
+              const pwObj = await DentalDB.get('settings', 'adminPasswordHash');
+              if (pwObj) {
+                this.state.settings.adminPasswordHash = pwObj.value;
+              }
+
+              const clinicObj = await DentalDB.get('settings', 'clinicName');
+              if (clinicObj) this.state.settings.clinicName = clinicObj.value;
+
+              const profObj = await DentalDB.get('settings', 'professionalName');
+              if (profObj) this.state.settings.professionalName = profObj.value;
+            } catch (initDbErr) {
+              console.warn('Falha em operações de DB durante init. Ativando modo memória:', initDbErr);
+              isMemoryMode = true;
+            }
           }
-
-          const clinicObj = await DentalDB.get('settings', 'clinicName');
-          if (clinicObj) this.state.settings.clinicName = clinicObj.value;
-
-          const profObj = await DentalDB.get('settings', 'professionalName');
-          if (profObj) this.state.settings.professionalName = profObj.value;
+          
+          if (isMemoryMode) {
+             if (!Array.isArray(this.state.procedures) || this.state.procedures.length === 0) {
+                this.state.procedures = INITIAL_PROCEDURES.map(p => ({...p}));
+             }
+          }
 
           this.updateHeaderAndBranding();
           this.updateProcedureSelects();
@@ -3128,6 +3157,11 @@
           this.refreshAllIndicators();
 
           console.log('DentalPro inicializado com sucesso.');
+          if (isMemoryMode) {
+            setTimeout(() => {
+               this.toast('Modo Visualização: A persistência de dados está bloqueada neste navegador.', 'error');
+            }, 1000);
+          }
         } catch (err) {
           console.error('Erro crítico na inicialização:', err);
           this.toast('Erro ao iniciar o aplicativo: ' + err.message, 'error');
@@ -3135,11 +3169,23 @@
       },
 
       async loadDatabase() {
-        this.state.procedures = await DentalDB.getAll('procedures');
-        this.state.records = await DentalDB.getAll('records');
-        const targetList = await DentalDB.getAll('targets');
-        this.state.targets = {};
-        targetList.forEach(t => { this.state.targets[t.month] = t.value; });
+        try {
+          this.state.procedures = await DentalDB.getAll('procedures');
+          this.state.records = await DentalDB.getAll('records');
+          const targetList = await DentalDB.getAll('targets');
+          this.state.targets = {};
+          targetList.forEach(t => { this.state.targets[t.month] = t.value; });
+        } catch (err) {
+          console.warn('Falha ao carregar banco de dados local. Operando em modo de memória.', err);
+          // Fallback in-memory
+          if (!this.state.procedures || !Array.isArray(this.state.procedures) || this.state.procedures.length === 0) {
+            // Garante cópia profunda para evitar mutações acidentais na constante
+            this.state.procedures = INITIAL_PROCEDURES.map(p => ({...p})); 
+          }
+          if (!this.state.records || !Array.isArray(this.state.records)) this.state.records = [];
+          if (!this.state.targets || typeof this.state.targets !== 'object') this.state.targets = {};
+          throw new Error('MODO_MEMORIA'); // Sinaliza para init() que estamos sem persistência
+        }
       },
 
       populateDropdowns() {
@@ -3220,9 +3266,10 @@
         selForm.innerHTML = '<option value="">Selecione um procedimento...</option>';
         selFilter.innerHTML = '<option value="">Todos os procedimentos</option>';
 
-        this.state.procedures
+        const procs = Array.isArray(this.state.procedures) ? this.state.procedures : [];
+        procs
           .filter(p => p.active)
-          .sort((a, b) => a.name.localeCompare(b.name))
+          .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
           .forEach(p => {
             const opt = document.createElement('option');
             opt.value = p.id;
@@ -3238,7 +3285,8 @@
 
       onProcedureChange() {
         const procId = document.getElementById('rec-proc-id').value;
-        const proc = this.state.procedures.find(p => p.id === procId);
+        const procs = Array.isArray(this.state.procedures) ? this.state.procedures : [];
+        const proc = procs.find(p => p.id === procId);
         if (!proc) return;
 
         const teethSection = document.getElementById('rec-teeth-section');
@@ -3257,7 +3305,8 @@
         const duration = parseInt(document.getElementById('rec-duration').value, 10) || 30;
 
         let unitPrice = 0;
-        const proc = this.state.procedures.find(p => p.id === procId);
+        const procs = Array.isArray(this.state.procedures) ? this.state.procedures : [];
+        const proc = procs.find(p => p.id === procId);
         if (proc) {
           unitPrice = proc.price;
         }
@@ -3320,7 +3369,8 @@
           return;
         }
 
-        const proc = this.state.procedures.find(p => p.id === procId);
+        const procs = Array.isArray(this.state.procedures) ? this.state.procedures : [];
+        const proc = procs.find(p => p.id === procId);
         if (!proc) {
           this.toast('Procedimento inválido ou inativo.');
           return;
@@ -3349,8 +3399,16 @@
           timestamp: Date.now()
         };
 
-        await DentalDB.put('records', record);
-        await this.loadDatabase();
+        try {
+          await DentalDB.put('records', record);
+          await this.loadDatabase();
+        } catch (e) {
+          console.warn('DB indisponível, salvando em memória', e);
+          if (!Array.isArray(this.state.records)) this.state.records = [];
+          const idx = this.state.records.findIndex(r => r.id === record.id);
+          if (idx >= 0) this.state.records[idx] = record;
+          else this.state.records.push(record);
+        }
 
         this.toast('Atendimento registrado com sucesso!', 'success');
         this.resetNewRecordForm();
@@ -3359,7 +3417,8 @@
       },
 
       editRecord(recId) {
-        const rec = this.state.records.find(r => r.id === recId);
+        const records = Array.isArray(this.state.records) ? this.state.records : [];
+        const rec = records.find(r => r.id === recId);
         if (!rec) return;
 
         this.navigate('new');
@@ -3402,14 +3461,21 @@
       },
 
       async deleteRecord(recId) {
-        const rec = this.state.records.find(r => r.id === recId);
+        const records = Array.isArray(this.state.records) ? this.state.records : [];
+        const rec = records.find(r => r.id === recId);
         if (!rec) return;
 
         const confirmMsg = `Tem certeza de que deseja excluir este registro?\n\nProcedimento: ${rec.procedureName}\nData: ${formatDateBR(rec.date)} ${rec.time}\nFaturamento: ${formatBRL(rec.totalRevenue)}`;
         if (!confirm(confirmMsg)) return;
 
-        await DentalDB.delete('records', recId);
-        await this.loadDatabase();
+        try {
+          await DentalDB.delete('records', recId);
+          await this.loadDatabase();
+        } catch (e) {
+           console.warn('DB delete bloqueado', e);
+           const records = Array.isArray(this.state.records) ? this.state.records : [];
+           this.state.records = records.filter(r => r.id !== recId);
+        }
 
         this.toast('Registro excluído com sucesso.');
         this.refreshAllIndicators();
@@ -3444,7 +3510,8 @@
       },
 
       getFilteredRecords() {
-        let list = [...this.state.records];
+        const records = Array.isArray(this.state.records) ? this.state.records : [];
+        let list = [...records];
         const f = this.state.activeFilters;
         if (!f) return list.sort((a, b) => (b.date + b.time).localeCompare(a.date + a.time));
 
@@ -3534,7 +3601,8 @@
         const monthDaysSet = new Set();
         const monthRecords = [];
 
-        this.state.records.forEach(r => {
+        const records = Array.isArray(this.state.records) ? this.state.records : [];
+        records.forEach(r => {
           allTimeRev += (r.totalRevenue || 0);
           if (r.date && r.date.startsWith(month)) {
             monthRev += (r.totalRevenue || 0);
@@ -3729,7 +3797,8 @@
           dailyRev[dStr] = 0;
         }
 
-        this.state.records.forEach(r => {
+        const records = Array.isArray(this.state.records) ? this.state.records : [];
+        records.forEach(r => {
           if (r.date && r.date.startsWith(month) && dailyRev[r.date] !== undefined) {
             dailyRev[r.date] += (r.totalRevenue || 0);
           }
@@ -3786,7 +3855,8 @@
         const isMonth = this.state.rentabilityPeriod === 'month';
         const currentM = this.state.currentMonth;
 
-        const relevantRecords = this.state.records.filter(r => isMonth ? r.date.startsWith(currentM) : true);
+        const records = Array.isArray(this.state.records) ? this.state.records : [];
+        const relevantRecords = records.filter(r => isMonth ? r.date.startsWith(currentM) : true);
 
         // Agrupamento consolidado por procedimento
         const map = {};
@@ -3930,7 +4000,8 @@
 
       renderAdminProceduresList() {
         const container = document.getElementById('admin-procedures-list');
-        container.innerHTML = this.state.procedures.map(p => `
+        const procs = Array.isArray(this.state.procedures) ? this.state.procedures : [];
+        container.innerHTML = procs.map(p => `
           <div style="background: #F9F9F9; border: 1px solid #E5E5E5; border-radius: var(--radius-sm); padding: 10px; display: flex; justify-content: space-between; align-items: center;">
             <div>
               <div style="font-weight: 700; font-size: 0.85rem; color: ${p.active ? 'var(--text-main)' : '#999'};">
@@ -3961,7 +4032,8 @@
       },
 
       openEditProcedureModal(id) {
-        const proc = this.state.procedures.find(p => p.id === id);
+        const procs = Array.isArray(this.state.procedures) ? this.state.procedures : [];
+        const proc = procs.find(p => p.id === id);
         if (!proc) return;
 
         document.getElementById('proc-modal-id').value = proc.id;
@@ -3992,7 +4064,8 @@
       },
 
       async toggleProcedureActive(id) {
-        const proc = this.state.procedures.find(p => p.id === id);
+        const procs = Array.isArray(this.state.procedures) ? this.state.procedures : [];
+        const proc = procs.find(p => p.id === id);
         if (!proc) return;
 
         proc.active = !proc.active;
@@ -4084,9 +4157,10 @@
       },
 
       openExtractModal() {
-        const currentMonthRecs = this.state.records.filter(r => r.date && r.date.startsWith(this.state.currentMonth));
+        const records = Array.isArray(this.state.records) ? this.state.records : [];
+        const currentMonthRecs = records.filter(r => r.date && r.date.startsWith(this.state.currentMonth));
         const filteredRecs = this.getFilteredRecords();
-        const allRecs = this.state.records;
+        const allRecs = records;
 
         const sumMonthRev = currentMonthRecs.reduce((acc, r) => acc + (r.totalRevenue || 0), 0);
         const sumFiltRev = filteredRecs.reduce((acc, r) => acc + (r.totalRevenue || 0), 0);
@@ -4142,12 +4216,13 @@
       },
 
       getExtractRecords() {
+        const records = Array.isArray(this.state.records) ? this.state.records : [];
         if (this.extractScope === 'filtered') {
           return this.getFilteredRecords();
         } else if (this.extractScope === 'all') {
-          return [...this.state.records].sort((a, b) => (b.date + (b.time || '')).localeCompare(a.date + (a.time || '')));
+          return [...records].sort((a, b) => (b.date + (b.time || '')).localeCompare(a.date + (a.time || '')));
         } else {
-          return this.state.records
+          return records
             .filter(r => r.date && r.date.startsWith(this.state.currentMonth))
             .sort((a, b) => (b.date + (b.time || '')).localeCompare(a.date + (a.time || '')));
         }
