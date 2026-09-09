@@ -130,7 +130,7 @@ fun DentalProWebView(modifier: Modifier = Modifier) {
   AndroidView(
     factory = { context ->
       WebView(context).apply {
-        setLayerType(View.LAYER_TYPE_HARDWARE, null)
+        setLayerType(View.LAYER_TYPE_SOFTWARE, null)
         isFocusable = true
         isFocusableInTouchMode = true
         isScrollbarFadingEnabled = true

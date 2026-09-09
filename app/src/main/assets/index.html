@@ -1643,7 +1643,10 @@
             <svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
             <span>FATURAMENTO DO MÊS</span>
           </div>
-          <span class="dash-vip-badge" id="dash-today-revenue">Hoje: R$ 0,00</span>
+          <div style="display:flex; gap:6px; align-items:center;">
+            <span class="dash-vip-badge" id="dash-today-revenue">Hoje: R$ 0,00</span>
+            <span id="dash-zscore-badge" style="display:none; padding:3px 9px; border-radius:12px; font-size:0.72rem; font-weight:700;"></span>
+          </div>
         </div>
         <div class="dash-vip-value" id="dash-month-revenue">R$ 0,00</div>
         <div class="dash-vip-footer">
@@ -3631,7 +3634,43 @@
         let avgDaily = 0;
         if (daysProduced > 0) {
           avgDaily = monthRev / daysProduced;
-          projection = avgDaily * daysInMonth;
+          // [Analytics Engineer] Projection adjustment: Use business days (max 22) instead of absolute days for realistic forecasting.
+          const businessDays = Math.min(daysInMonth, 22);
+          projection = avgDaily * businessDays;
+        }
+
+        // [Analytics Engineer] Anomaly Detection (Z-Score)
+        const elZScore = document.getElementById('dash-zscore-badge');
+        if (elZScore) {
+          elZScore.style.display = 'none';
+          if (records.length > 5 && daysProduced > 0 && todayRev > 0) {
+            const dailyMap = {};
+            records.forEach(r => {
+              if (r.date) {
+                if (!dailyMap[r.date]) dailyMap[r.date] = 0;
+                dailyMap[r.date] += (r.totalRevenue || 0);
+              }
+            });
+            const values = Object.values(dailyMap);
+            const mean = values.reduce((a, b) => a + b, 0) / values.length;
+            const variance = values.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / values.length;
+            const stdDev = Math.sqrt(variance);
+
+            if (stdDev > 0) {
+              const zScore = (todayRev - mean) / stdDev;
+              if (zScore >= 1.5) {
+                elZScore.textContent = `Alta Anomalia (Z: +${zScore.toFixed(1)})`;
+                elZScore.style.background = 'var(--success)';
+                elZScore.style.color = '#fff';
+                elZScore.style.display = 'inline-block';
+              } else if (zScore <= -1.5 && todayRev < mean) {
+                elZScore.textContent = `Queda de Volume (Z: ${zScore.toFixed(1)})`;
+                elZScore.style.background = 'var(--danger)';
+                elZScore.style.color = '#fff';
+                elZScore.style.display = 'inline-block';
+              }
+            }
+          }
         }
 
         const avgTicket = monthProcCount > 0 ? monthRev / monthProcCount : 0;
